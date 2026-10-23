@@ -5,11 +5,17 @@ import { useAuth } from "../context/AuthContext";
 export function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [rnc, setRnc] = useState("101234567");
-  const [usuario, setUsuario] = useState("usuario-prueba");
-  const [password, setPassword] = useState("password-prueba");
+  const [rnc, setRnc] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const fillDemo = () => {
+    setRnc("101234567");
+    setUsuario("usuario-prueba");
+    setPassword("password-prueba");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,8 +25,7 @@ export function Login() {
       await login({ rnc, usuario, password });
       navigate("/");
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "Credenciales inválidas";
+      const msg = err instanceof Error ? err.message : "Credenciales inválidas";
       setError(msg);
     } finally {
       setLoading(false);
@@ -28,37 +33,102 @@ export function Login() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "80px auto" }} className="card">
-      <h1>Iniciar sesión</h1>
-      <p style={{ color: "var(--color-muted)", fontSize: 13 }}>
-        Simulador local e-CF — sin validez fiscal
-      </p>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "var(--space-3)" }}>
-          <label>RNC</label>
-          <input value={rnc} onChange={(e) => setRnc(e.target.value)} />
-        </div>
-        <div style={{ marginBottom: "var(--space-3)" }}>
-          <label>Usuario</label>
-          <input value={usuario} onChange={(e) => setUsuario(e.target.value)} />
-        </div>
-        <div style={{ marginBottom: "var(--space-4)" }}>
-          <label>Contraseña</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        {error && (
-          <div style={{ color: "var(--color-danger)", marginBottom: "var(--space-3)" }}>
-            {error}
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%)",
+        padding: "var(--space-4)",
+      }}
+    >
+      <div
+        className="card elevated"
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          padding: "var(--space-8)",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: "var(--space-6)" }}>
+          <div
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: "var(--radius-lg)",
+              background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))",
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 24,
+              fontWeight: 700,
+              margin: "0 auto var(--space-3)",
+              boxShadow: "var(--shadow-md)",
+            }}
+          >
+            e
           </div>
-        )}
-        <button type="submit" className="primary" disabled={loading} style={{ width: "100%" }}>
-          {loading ? "Ingresando..." : "Ingresar"}
-        </button>
-      </form>
+          <h1 style={{ margin: 0, fontSize: 22 }}>Portal Administrativo</h1>
+          <p style={{ color: "var(--color-muted)", fontSize: 13, marginTop: 4 }}>
+            Simulador e-CF (DGII RD) — sin validez fiscal
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: "var(--space-3)" }}>
+            <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>
+              RNC
+            </label>
+            <input value={rnc} onChange={(e) => setRnc(e.target.value)} placeholder="101234567" />
+          </div>
+          <div style={{ marginBottom: "var(--space-3)" }}>
+            <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>
+              Usuario
+            </label>
+            <input value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="usuario-prueba" />
+          </div>
+          <div style={{ marginBottom: "var(--space-4)" }}>
+            <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>
+              Contraseña
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="password-prueba"
+            />
+          </div>
+
+          {error && (
+            <div
+              style={{
+                color: "var(--color-danger)",
+                background: "var(--color-danger-light)",
+                padding: "var(--space-2) var(--space-3)",
+                borderRadius: "var(--radius-sm)",
+                fontSize: 13,
+                marginBottom: "var(--space-3)",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <button type="submit" className="primary" disabled={loading} style={{ width: "100%", marginBottom: "var(--space-3)" }}>
+            {loading ? "Ingresando..." : "Ingresar"}
+          </button>
+
+          <button type="button" onClick={fillDemo} style={{ width: "100%", fontSize: 12 }}>
+            Usar credenciales de prueba
+          </button>
+        </form>
+
+        <p style={{ color: "var(--color-muted)", fontSize: 11, textAlign: "center", marginTop: "var(--space-4)" }}>
+          Credenciales: RNC 101234567 / usuario-prueba / password-prueba
+        </p>
+      </div>
     </div>
   );
 }
