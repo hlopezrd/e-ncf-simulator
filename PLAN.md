@@ -401,6 +401,10 @@ curl -H "Authorization: Bearer $TOKEN" \
 8. Request specs.
 9. README.
 
+## Entorno de producción
+
+El entorno de producción del simulador es `https://sim.ecfgateway.com` (Kamal + Cloudflare DNS only + Let's Encrypt). Aunque se denomina producción, sigue siendo un simulador sin validez fiscal.
+
 ## Lo que falta (por diseño o futuro)
 
 - Validación XSD completa (hook `XSD_VALIDATION_ENABLED` listo; falta incorporar schemas oficiales).

@@ -110,6 +110,18 @@ Secretos requeridos en `.kamal/secrets`: `KAMAL_REGISTRY_PASSWORD`, `RAILS_MASTE
 - Usuario: `usuario-prueba`
 - Password: `password-prueba`
 
+## Entorno de producción
+
+El entorno de producción del simulador es:
+
+- URL: https://sim.ecfgateway.com
+- Deploy: Kamal (Docker) sobre el servidor `tempest` (108.181.196.247).
+- Proxy: kamal-proxy compartido con staging.ecfgateway.com.
+- DNS: Cloudflare, registro `A sim → 108.181.196.247` (DNS only).
+- Certificado: Let's Encrypt (gestionado por Kamal).
+
+Aunque se denomina "producción", sigue siendo un **simulador sin validez fiscal**. No se conecta a la DGII real.
+
 ## Notas
 
 - Validación XSD disponible. Schemas oficiales en `lib/xsd/`. Activada por defecto en producción (deploy.yml); en desarrollo/tests se activa con `XSD_VALIDATION_ENABLED=true`.
