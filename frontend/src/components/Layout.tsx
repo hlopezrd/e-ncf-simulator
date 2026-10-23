@@ -21,7 +21,29 @@ export function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="layout">
       <aside className="sidebar">
-        <h2 style={{ marginTop: 0 }}>e-CF Admin</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-6)" }}>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "var(--radius-md)",
+              background: "linear-gradient(135deg, #818cf8, #6366f1)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 700,
+              color: "#fff",
+              fontSize: 18,
+              boxShadow: "0 4px 12px rgba(99, 102, 241, 0.4)",
+            }}
+          >
+            e
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: "#fff" }}>e-CF Admin</div>
+            <div style={{ fontSize: 11, color: "#94a3b8" }}>Simulador DGII RD</div>
+          </div>
+        </div>
         {nav.map((n) => (
           <Link
             key={n.to}

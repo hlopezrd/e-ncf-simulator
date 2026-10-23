@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-light: #dbeafe;
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-primary-light: #e0e7ff;
   --color-success: #16a34a;
   --color-success-light: #dcfce7;
   --color-warning: #d97706;
@@ -67,10 +67,10 @@ button {
 button:hover { border-color: var(--color-primary); color: var(--color-primary); }
 
 button.primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: #fff;
   border: none;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 button.primary:hover {
@@ -107,11 +107,21 @@ input:focus, select:focus, textarea:focus {
   padding: var(--space-5);
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition), transform var(--transition);
+  animation: fadeIn 0.3s ease;
 }
 
 .card:hover { box-shadow: var(--shadow-md); }
 
 .card.elevated { box-shadow: var(--shadow-md); }
+
+.card.accent {
+  border-top: 3px solid var(--color-primary);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 .badge {
   display: inline-flex;
@@ -136,11 +146,11 @@ input:focus, select:focus, textarea:focus {
 
 .sidebar {
   width: 250px;
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(180deg, #1e1b4b 0%, #312e81 50%, #3730a3 100%);
   color: #e2e8f0;
   padding: var(--space-5) var(--space-3);
   flex-shrink: 0;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+  box-shadow: 2px 0 20px rgba(30, 27, 75, 0.25);
 }
 
 .sidebar h2 {
@@ -171,9 +181,9 @@ input:focus, select:focus, textarea:focus {
 }
 
 .sidebar a.active {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  background: linear-gradient(135deg, #818cf8, #6366f1);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 
 .sidebar button {

@@ -8,10 +8,10 @@ export function Dashboard() {
   });
 
   const metrics = [
-    { label: "Total e-CF", value: "—", color: "primary" },
-    { label: "Aceptados", value: "—", color: "success" },
-    { label: "Rechazados", value: "—", color: "danger" },
-    { label: "Condicionales", value: "—", color: "warning" },
+    { label: "Total e-CF", value: "—", color: "primary", icon: "📄" },
+    { label: "Aceptados", value: "—", color: "success", icon: "✅" },
+    { label: "Rechazados", value: "—", color: "danger", icon: "❌" },
+    { label: "Condicionales", value: "—", color: "warning", icon: "⚠️" },
   ];
 
   return (
@@ -27,11 +27,14 @@ export function Dashboard() {
         }}
       >
         {metrics.map((m) => (
-          <div key={m.label} className="card elevated">
-            <div style={{ color: "var(--color-muted)", fontSize: 13, marginBottom: 4 }}>
-              {m.label}
+          <div key={m.label} className="card elevated accent">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-2)" }}>
+              <span style={{ color: "var(--color-muted)", fontSize: 13, fontWeight: 500 }}>
+                {m.label}
+              </span>
+              <span style={{ fontSize: 20 }}>{m.icon}</span>
             </div>
-            <div style={{ fontSize: 28, fontWeight: 700, color: `var(--color-${m.color})` }}>
+            <div style={{ fontSize: 32, fontWeight: 700, color: `var(--color-${m.color})` }}>
               {m.value}
             </div>
           </div>
