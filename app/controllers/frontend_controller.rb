@@ -1,5 +1,5 @@
 class FrontendController < ApplicationController
   def index
-    render file: Rails.root.join("public", "index.html"), layout: false, content_type: "text/html"
+    render html: File.read(Rails.root.join("public", "index.html")).html_safe
   end
 end
