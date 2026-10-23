@@ -10,8 +10,11 @@ export function Usuarios() {
     queryFn: usuariosApi.list,
   });
 
+  const [rnc, setRnc] = useState("101234567");
+  const [username, setUsername] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [roleId, setRoleId] = useState("");
   const [roleName, setRoleName] = useState("");
 
@@ -22,8 +25,8 @@ export function Usuarios() {
   const [editActive, setEditActive] = useState(true);
 
   const createUser = useMutation({
-    mutationFn: () => usuariosApi.create({ name, email, role_id: Number(roleId), active: true }),
-    onSuccess: () => { setName(""); setEmail(""); setRoleId(""); qc.invalidateQueries({ queryKey: ["usuarios"] }); },
+    mutationFn: () => usuariosApi.create({ rnc, username, name, email, password, role_id: Number(roleId), active: true }),
+    onSuccess: () => { setRnc("101234567"); setUsername(""); setName(""); setEmail(""); setPassword(""); setRoleId(""); qc.invalidateQueries({ queryKey: ["usuarios"] }); },
   });
 
   const deleteUser = useMutation({
@@ -56,15 +59,18 @@ export function Usuarios() {
       <div className="card" style={{ marginBottom: "var(--space-4)" }}>
         <h3>Crear usuario</h3>
         <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", alignItems: "center" }}>
+          <input placeholder="RNC" value={rnc} onChange={(e) => setRnc(e.target.value)} style={{ width: 120 }} />
+          <input placeholder="Usuario (username)" value={username} onChange={(e) => setUsername(e.target.value)} style={{ width: 160 }} />
           <input placeholder="Nombre" value={name} onChange={(e) => setName(e.target.value)} style={{ width: 160 }} />
           <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: 200 }} />
+          <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: 160 }} />
           <select value={roleId} onChange={(e) => setRoleId(e.target.value)} style={{ width: 160 }}>
             <option value="">Seleccionar rol</option>
             {data?.roles.map((r) => (
               <option key={r.id} value={r.id}>{r.name}</option>
             ))}
           </select>
-          <button className="primary" onClick={() => createUser.mutate()} disabled={!name || !email || !roleId}>
+          <button className="primary" onClick={() => createUser.mutate()} disabled={!rnc || !username || !name || !email || !password || !roleId}>
             Crear
           </button>
         </div>
@@ -89,6 +95,8 @@ export function Usuarios() {
           <table style={{ marginBottom: "var(--space-6)" }}>
             <thead>
               <tr>
+                <th>RNC</th>
+                <th>Usuario</th>
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Rol</th>
@@ -101,6 +109,8 @@ export function Usuarios() {
                 <tr key={u.id}>
                   {editingId === u.id ? (
                     <>
+                      <td>{u.rnc}</td>
+                      <td>{u.username}</td>
                       <td><input value={editName} onChange={(e) => setEditName(e.target.value)} /></td>
                       <td><input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} /></td>
                       <td>
@@ -120,6 +130,8 @@ export function Usuarios() {
                     </>
                   ) : (
                     <>
+                      <td>{u.rnc}</td>
+                      <td>{u.username}</td>
                       <td>{u.name}</td>
                       <td>{u.email}</td>
                       <td><span className="badge info">{u.role}</span></td>
@@ -143,10 +155,7 @@ export function Usuarios() {
                             }
                           }
                         }}>Cambiar clave</button>
-                        <button onClick={async () => {
-                          const res = await Swal.fire({ title: "Eliminar usuario", text: u.email, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
-                          if (res.isConfirmed) deleteUser.mutate(u.id);
-                        }}>Eliminar</button>
+                        <button onClick={() => deleteUser.mutate(u.id)}>Eliminar</button>
                       </td>
                     </>
                   )}
@@ -154,7 +163,7 @@ export function Usuarios() {
               ))}
               {data.users.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: "center", color: "var(--color-muted)" }}>
+                  <td colSpan={7} style={{ textAlign: "center", color: "var(--color-muted)" }}>
                     Sin usuarios
                   </td>
                 </tr>
