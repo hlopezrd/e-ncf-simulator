@@ -7,6 +7,9 @@ import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
 import { Placeholder } from "./pages/Placeholder";
 import { Empresas } from "./pages/Empresas";
+import { EcfList } from "./pages/EcfList";
+import { EcfDetail } from "./pages/EcfDetail";
+import { TrackIds } from "./pages/TrackIds";
 
 const qc = new QueryClient();
 
@@ -25,8 +28,9 @@ function AppRoutes() {
             <Layout>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
-                <Route path="/ecf" element={<Placeholder title="e-CF" />} />
-                <Route path="/trackids" element={<Placeholder title="TrackIds" />} />
+                <Route path="/ecf" element={<EcfList />} />
+                <Route path="/ecf/:trackId" element={<EcfDetail />} />
+                <Route path="/trackids" element={<TrackIds />} />
                 <Route path="/empresas" element={<Empresas />} />
                 <Route path="/certificados" element={<Placeholder title="Certificados" />} />
                 <Route path="/reglas" element={<Placeholder title="Reglas de simulación" />} />

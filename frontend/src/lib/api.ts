@@ -51,6 +51,8 @@ export interface EcfItem {
   tipoComprobante: string | null;
   fechaEmision: string | null;
   fechaRecepcion: string;
+  errores: unknown[];
+  advertencias: unknown[];
 }
 
 export interface EcfListResponse {
@@ -78,9 +80,29 @@ export const ecfApi = {
     if (params?.rnc) q.set("rnc", params.rnc);
     return apiFetch<EcfListResponse>(`/api/ecf?${q.toString()}`);
   },
-  detail: (trackId: string) => apiFetch<EcfItem & { xml: string }>(`/api/ecf/${trackId}`),
+  detail: (trackId: string, token: string) => apiFetch<EcfItem & { xml: string }>(`/api/ecf/${trackId}`, {}, token),
 };
 
 export const empresasApi = {
   list: () => apiFetch<EmpresaListResponse>("/api/empresas"),
+};
+
+export interface TrackIdQueryResponse {
+  trackId: string | null;
+  estado: string;
+  rncEmisor?: string;
+  eNCF?: string;
+  fechaRecepcion?: string;
+  mensaje?: string;
+}
+
+export const trackidsApi = {
+  byTrackId: (trackId: string, token: string) =>
+    apiFetch<TrackIdQueryResponse>(`/api/consulta-estado/${trackId}`, {}, token),
+  byRncEncf: (rnc: string, encf: string, token: string) =>
+    apiFetch<TrackIdQueryResponse>(
+      `/api/trackids/consulta?rncemisor=${encodeURIComponent(rnc)}&encf=${encodeURIComponent(encf)}`,
+      {},
+      token
+    ),
 };
