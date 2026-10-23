@@ -16,7 +16,9 @@
 - [x] Kamal + Dockerfile preparados para deploy
 - [x] Validación XSD completa (hook implementado, activado por defecto; schemas en lib/xsd/)
 - [x] Firma digital (validación estructural + verificación criptográfica real RSA-SHA256)
-- [ ] Panel administrativo / integración externa
+- [x] Monitoreo/alertas (AppSignal configurado)
+- [ ] Panel administrativo (futuro)
+- [ ] Integración externa (nunca, es simulador)
 
 ## 1. Objetivo
 
