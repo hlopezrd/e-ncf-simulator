@@ -26,6 +26,8 @@ Rails.application.configure do
   config.force_ssl = true
 
   # Content Security Policy (mitigate XSS).
+  config.middleware.use ActionDispatch::ContentSecurityPolicy::Middleware
+
   config.content_security_policy do |policy|
     policy.default_src :self
     policy.script_src :self
