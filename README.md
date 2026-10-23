@@ -125,5 +125,5 @@ Aunque se denomina "producción", sigue siendo un **simulador sin validez fiscal
 ## Notas
 
 - Validación XSD disponible. Schemas oficiales en `lib/xsd/`. Activada por defecto en producción (deploy.yml); en desarrollo/tests se activa con `XSD_VALIDATION_ENABLED=true`.
-- Firma digital no implementada (simulada).
+- Firma digital: se valida la presencia y estructura básica del nodo `Signature` (simulada, sin criptografía real).
 - No incluye Docker, Redis, Sidekiq ni PostgreSQL.

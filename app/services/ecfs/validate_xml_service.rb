@@ -80,6 +80,18 @@ module Ecfs
         @errors << error("E009", "totales", "Los totales son obligatorios", "ERROR")
       end
 
+      signature_node = doc.xpath("//*[local-name()='Signature']").first
+      if signature_node.nil?
+        @errors << error("E012", "signature", "La firma digital es obligatoria", "ERROR")
+      else
+        unless signature_node.xpath("./*[local-name()='SignatureValue']").any?
+          @errors << error("E013", "signature", "Falta SignatureValue en la firma digital", "ERROR")
+        end
+        unless signature_node.xpath("./*[local-name()='SignedInfo']").any?
+          @errors << error("E014", "signature", "Falta SignedInfo en la firma digital", "ERROR")
+        end
+      end
+
       comprador = text_of(doc, %w[RNCComprador RncComprador rncComprador])
       if comprador.blank?
         @warnings << error("W001", "rncComprador", "Falta el RNC del comprador", "WARNING")
