@@ -28,7 +28,7 @@ export function DataTable({ data, columns, pageLength = 10, emptyTable }: Props)
       options={{
         pageLength,
         language: { ...dtLanguage, emptyTable: emptyTable ?? dtLanguage.emptyTable },
-        dom: "lfrtip",
+        dom: '<"dt-top"lf>rt<"dt-bottom"ip>',
       }}
     />
   );

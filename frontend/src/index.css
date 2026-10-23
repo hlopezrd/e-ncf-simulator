@@ -402,11 +402,32 @@ table.dataTable tbody tr:last-child td {
   margin-bottom: var(--space-3);
 }
 
-.dataTables_wrapper .top, .dataTables_wrapper .bottom {
+.dataTables_wrapper .dt-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-bottom: var(--space-3);
+}
+
+.dataTables_wrapper .dt-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.dataTables_wrapper .dt-top .dataTables_length,
+.dataTables_wrapper .dt-top .dataTables_filter {
+  float: none;
+  margin: 0;
+}
+
+.dataTables_wrapper .dt-bottom .dataTables_info,
+.dataTables_wrapper .dt-bottom .dataTables_paginate {
+  float: none;
+  margin: 0;
 }
