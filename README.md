@@ -138,6 +138,9 @@ AppSignal configurado para producción (error tracking y performance). Requiere 
 
 ## Notas
 
+- Auditoría: PaperTrail (versionado de cambios) + AuditLog (acciones de panel).
+- Soft-delete: Paranoia (`deleted_at`) en todos los modelos.
+
 - Validación XSD disponible. Schemas oficiales en `lib/xsd/`. Activada por defecto en producción (deploy.yml); en desarrollo/tests se activa con `XSD_VALIDATION_ENABLED=true`.
 - Firma digital: validación estructural + verificación criptográfica real (RSA-SHA256) usando un certificado self-signed de prueba. Desactivable con `SIGNATURE_VERIFICATION_ENABLED=false`.
 - No incluye Docker, Redis, Sidekiq ni PostgreSQL.
