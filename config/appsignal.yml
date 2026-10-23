@@ -1,0 +1,17 @@
+default: &defaults
+  active: true
+  name: "e-CF Simulator"
+  environment: <%= Rails.env %>
+  push_api_key: <%= ENV["APPSIGNAL_PUSH_API_KEY"] %>
+
+development:
+  <<: *defaults
+  active: false
+
+test:
+  <<: *defaults
+  active: false
+
+production:
+  <<: *defaults
+  active: true

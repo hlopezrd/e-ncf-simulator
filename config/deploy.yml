@@ -34,6 +34,7 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
+    - APPSIGNAL_PUSH_API_KEY
   clear:
     RAILS_LOG_LEVEL: info
     XSD_VALIDATION_ENABLED: true
