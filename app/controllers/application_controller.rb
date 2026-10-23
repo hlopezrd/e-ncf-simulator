@@ -38,5 +38,4 @@ class ApplicationController < ActionController::API
       render json: { error: "Token inválido o expirado", request_id: request.request_id }, status: :unauthorized
     end
   end
-
 end
