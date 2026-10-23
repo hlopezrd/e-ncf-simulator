@@ -14,6 +14,7 @@ const TrackIds = lazy(() => import("./pages/TrackIds").then((m) => ({ default: m
 const Certificados = lazy(() => import("./pages/Certificados").then((m) => ({ default: m.Certificados })));
 const Validaciones = lazy(() => import("./pages/Validaciones").then((m) => ({ default: m.Validaciones })));
 const Reglas = lazy(() => import("./pages/Reglas").then((m) => ({ default: m.Reglas })));
+const AllowedOrigins = lazy(() => import("./pages/AllowedOrigins").then((m) => ({ default: m.AllowedOrigins })));
 const Usuarios = lazy(() => import("./pages/Usuarios").then((m) => ({ default: m.Usuarios })));
 const Auditoria = lazy(() => import("./pages/Auditoria").then((m) => ({ default: m.Auditoria })));
 
@@ -41,6 +42,7 @@ function AppRoutes() {
                 <Route path="/empresas" element={<Empresas />} />
                 <Route path="/certificados" element={<Certificados />} />
                 <Route path="/reglas" element={<Reglas />} />
+                <Route path="/cors" element={<AllowedOrigins />} />
                 <Route path="/usuarios" element={<Usuarios />} />
                 <Route path="/validaciones" element={<Validaciones />} />
                 <Route path="/auditoria" element={<Auditoria />} />

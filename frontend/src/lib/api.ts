@@ -154,6 +154,30 @@ export const reglasApi = {
     const q = active !== undefined ? `?active=${active}` : "";
     return apiFetch<ReglaListResponse>(`/api/reglas${q}`);
   },
+  create: (data: { name: string; description?: string; rule_type: string; active?: boolean; value?: string }) =>
+    apiFetch<ReglaItem>("/api/simulation_rules", { method: "POST", body: JSON.stringify(data) }),
+  update: (id: number, data: Partial<{ name: string; description: string; rule_type: string; active: boolean; value: string }>) =>
+    apiFetch<ReglaItem>(`/api/simulation_rules/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  remove: (id: number) =>
+    apiFetch<void>(`/api/simulation_rules/${id}`, { method: "DELETE" }),
+};
+
+export interface AllowedOriginItem {
+  id: number;
+  origin: string;
+  createdAt: string;
+}
+
+export interface AllowedOriginListResponse {
+  data: AllowedOriginItem[];
+  meta: { total: number };
+}
+
+export const allowedOriginsApi = {
+  list: () => apiFetch<AllowedOriginListResponse>("/api/allowed_origins"),
+  create: (origin: string) =>
+    apiFetch<AllowedOriginItem>("/api/allowed_origins", { method: "POST", body: JSON.stringify({ origin }) }),
+  remove: (id: number) => apiFetch<void>(`/api/allowed_origins/${id}`, { method: "DELETE" }),
 };
 
 export interface UsuarioItem {

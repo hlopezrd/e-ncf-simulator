@@ -10,6 +10,7 @@ const nav = [
   { to: "/certificados", label: "Certificados" },
   { to: "/validaciones", label: "Validaciones" },
   { to: "/reglas", label: "Reglas" },
+  { to: "/cors", label: "CORS" },
   { to: "/usuarios", label: "Usuarios" },
   { to: "/auditoria", label: "Auditoría" },
   { to: "/configuracion", label: "Configuración" },
