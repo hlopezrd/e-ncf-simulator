@@ -214,7 +214,7 @@ export const usuariosApi = {
   list: () => apiFetch<UsuarioListResponse>("/api/usuarios"),
   create: (data: { name: string; email: string; role_id: number; active?: boolean }) =>
     apiFetch<UsuarioItem>("/api/usuarios", { method: "POST", body: JSON.stringify(data) }),
-  update: (id: number, data: { name?: string; email?: string; role_id?: number; active?: boolean }) =>
+  update: (id: number, data: { name?: string; email?: string; role_id?: number; active?: boolean; password?: string }) =>
     apiFetch<UsuarioItem>(`/api/usuarios/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   remove: (id: number) => apiFetch<void>(`/api/usuarios/${id}`, { method: "DELETE" }),
 };

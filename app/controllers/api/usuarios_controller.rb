@@ -56,7 +56,7 @@ module Api
     private
 
     def user_params
-      params.permit(:name, :email, :active, :role_id)
+      params.permit(:name, :email, :active, :role_id, :password)
     end
 
     def user_json(u)

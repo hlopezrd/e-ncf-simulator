@@ -133,6 +133,17 @@ export function Usuarios() {
                           Editar
                         </button>
                         <button onClick={async () => {
+                          const res = await Swal.fire({ title: "Cambiar contraseña", input: "password", inputLabel: "Nueva contraseña", inputPlaceholder: "Mínimo 6 caracteres", showCancelButton: true, confirmButtonText: "Cambiar", cancelButtonText: "Cancelar" });
+                          if (res.isConfirmed && res.value) {
+                            try {
+                              await usuariosApi.update(u.id, { password: res.value });
+                              Swal.fire("Listo", "Contraseña actualizada", "success");
+                            } catch {
+                              Swal.fire("Error", "No se pudo cambiar la contraseña", "error");
+                            }
+                          }
+                        }}>Cambiar clave</button>
+                        <button onClick={async () => {
                           const res = await Swal.fire({ title: "Eliminar usuario", text: u.email, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
                           if (res.isConfirmed) deleteUser.mutate(u.id);
                         }}>Eliminar</button>
