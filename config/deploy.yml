@@ -13,10 +13,10 @@ servers:
 proxy:
   ssl: true
   host: sim.ecfgateway.com
-
-healthcheck:
-  path: /health
-  port: 3000
+  healthcheck:
+    path: /health
+    interval: 1
+    timeout: 10
 
 # Credentials for your image host (GHCR).
 registry:
