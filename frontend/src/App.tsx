@@ -1,20 +1,21 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { lazy, Suspense } from "react";
 import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
-import { Placeholder } from "./pages/Placeholder";
-import { Empresas } from "./pages/Empresas";
-import { EcfList } from "./pages/EcfList";
-import { Certificados } from "./pages/Certificados";
-import { Validaciones } from "./pages/Validaciones";
-import { Reglas } from "./pages/Reglas";
-import { Usuarios } from "./pages/Usuarios";
-import { Auditoria } from "./pages/Auditoria";
-import { EcfDetail } from "./pages/EcfDetail";
-import { TrackIds } from "./pages/TrackIds";
+const Placeholder = lazy(() => import("./pages/Placeholder").then((m) => ({ default: m.Placeholder })));
+const Empresas = lazy(() => import("./pages/Empresas").then((m) => ({ default: m.Empresas })));
+const EcfList = lazy(() => import("./pages/EcfList").then((m) => ({ default: m.EcfList })));
+const EcfDetail = lazy(() => import("./pages/EcfDetail").then((m) => ({ default: m.EcfDetail })));
+const TrackIds = lazy(() => import("./pages/TrackIds").then((m) => ({ default: m.TrackIds })));
+const Certificados = lazy(() => import("./pages/Certificados").then((m) => ({ default: m.Certificados })));
+const Validaciones = lazy(() => import("./pages/Validaciones").then((m) => ({ default: m.Validaciones })));
+const Reglas = lazy(() => import("./pages/Reglas").then((m) => ({ default: m.Reglas })));
+const Usuarios = lazy(() => import("./pages/Usuarios").then((m) => ({ default: m.Usuarios })));
+const Auditoria = lazy(() => import("./pages/Auditoria").then((m) => ({ default: m.Auditoria })));
 
 const qc = new QueryClient();
 
@@ -31,7 +32,8 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Layout>
-              <Routes>
+              <Suspense fallback={<div className="skeleton" style={{ height: 200, margin: "var(--space-5)" }} />}>
+                <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/ecf" element={<EcfList />} />
                 <Route path="/ecf/:trackId" element={<EcfDetail />} />
@@ -46,6 +48,7 @@ function AppRoutes() {
                 <Route path="/health" element={<Placeholder title="Salud del sistema" />} />
                 <Route path="*" element={<Placeholder title="No encontrado" />} />
               </Routes>
+              </Suspense>
             </Layout>
           </ProtectedRoute>
         }

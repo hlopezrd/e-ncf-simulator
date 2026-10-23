@@ -81,13 +81,13 @@ export function Login() {
             <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>
               RNC
             </label>
-            <input value={rnc} onChange={(e) => setRnc(e.target.value)} placeholder="101234567" />
+            <input aria-label="RNC" value={rnc} onChange={(e) => setRnc(e.target.value)} placeholder="101234567" />
           </div>
           <div style={{ marginBottom: "var(--space-3)" }}>
             <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>
               Usuario
             </label>
-            <input value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="usuario-prueba" />
+            <input aria-label="Usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="usuario-prueba" />
           </div>
           <div style={{ marginBottom: "var(--space-4)" }}>
             <label style={{ fontSize: 13, fontWeight: 500, display: "block", marginBottom: 4 }}>
@@ -95,6 +95,7 @@ export function Login() {
             </label>
             <input
               type="password"
+              aria-label="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="password-prueba"
