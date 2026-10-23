@@ -1,9 +1,8 @@
 # syntax=docker/dockerfile:1
 ARG RUBY_VERSION=3.4
 # Stage 1: build frontend (React + Vite)
-FROM node:20-alpine AS frontend
+FROM node:24-alpine AS frontend
 WORKDIR /frontend
-RUN corepack enable && corepack prepare yarn@1.22.22 --activate
 COPY frontend/package.json frontend/yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY frontend/ ./
