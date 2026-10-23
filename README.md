@@ -22,8 +22,18 @@ bin/rails db:create db:migrate
 
 ## Ejecutar
 
+### Backend
+
 ```bash
-bin/rails server   # http://localhost:3000
+bin/rails server -p 13000   # http://localhost:13000
+```
+
+### Frontend (portal admin)
+
+```bash
+cd frontend
+yarn install
+yarn dev   # http://localhost:5173 (proxy a Rails en 13000)
 ```
 
 ## Pruebas
