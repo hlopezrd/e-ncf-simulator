@@ -47,6 +47,18 @@ export const healthApi = {
   check: () => apiFetch<{ status: string; service: string; timestamp: string }>("/health"),
 };
 
+export interface MeResponse {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  rnc: string;
+}
+
+export const meApi = {
+  get: () => apiFetch<MeResponse>("/api/me"),
+};
+
 export interface EcfItem {
   trackId: string;
   estado: string;

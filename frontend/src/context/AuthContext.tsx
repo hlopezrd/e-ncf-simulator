@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import type { AuthCredentials } from "../types/auth";
-import { authApi, empresasApi } from "../lib/api";
-import { setUnauthorizedHandler } from "../lib/authEvents";
+import { authApi, meApi } from "../lib/api";
 
 interface AuthContextValue {
   isAuthenticated: boolean;
+  role: string | null;
   loading: boolean;
   login: (creds: AuthCredentials) => Promise<void>;
   logout: () => Promise<void>;
@@ -14,26 +14,33 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setUnauthorizedHandler(() => setIsAuthenticated(false));
-    empresasApi
-      .list()
-      .then(() => setIsAuthenticated(true))
-      .catch(() => setIsAuthenticated(false))
-      .finally(() => setLoading(false));
-    return () => setUnauthorizedHandler(null);
+  const refreshMe = useCallback(async () => {
+    try {
+      const me = await meApi.get();
+      setIsAuthenticated(true);
+      setRole(me.role);
+    } catch {
+      setIsAuthenticated(false);
+      setRole(null);
+    }
   }, []);
+
+  useEffect(() => {
+    refreshMe().finally(() => setLoading(false));
+  }, [refreshMe]);
 
   const login = useCallback(async (creds: AuthCredentials) => {
     await authApi.login(creds);
-    setIsAuthenticated(true);
-  }, []);
+    await refreshMe();
+  }, [refreshMe]);
 
   const logout = useCallback(async () => {
     await fetch("/api/auth", { method: "DELETE", credentials: "include" }).catch(() => {});
     setIsAuthenticated(false);
+    setRole(null);
   }, []);
 
   if (loading) {
@@ -41,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

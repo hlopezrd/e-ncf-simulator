@@ -1,6 +1,7 @@
 module Api
   class ConsultaEstadoController < ApplicationController
     before_action :authenticate_request!
+  include RoleAuthorization
 
     def show
       return if performed?

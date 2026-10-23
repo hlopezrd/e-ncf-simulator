@@ -3,6 +3,8 @@ class AuthToken < ApplicationRecord
   has_paper_trail
   attr_accessor :token
 
+  belongs_to :user, optional: true
+
   validates :token_digest, presence: true, uniqueness: true
   validates :rnc, presence: true
   validates :expires_at, presence: true

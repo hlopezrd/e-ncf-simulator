@@ -8,14 +8,15 @@ module Auth
       return nil unless user.active?
       return nil unless user.authenticate(password)
 
-      issue_token(rnc: rnc)
+      issue_token(user: user)
     end
 
-    def self.issue_token(rnc:)
+    def self.issue_token(user:)
       plaintext = "sim-token-#{SecureRandom.hex(16)}"
       record = AuthToken.create!(
         token_digest: Digest::SHA256.hexdigest(plaintext),
-        rnc: rnc,
+        rnc: user.rnc,
+        user: user,
         expires_at: Time.current + EXPIRES_IN.seconds
       )
       record.token = plaintext

@@ -1,6 +1,8 @@
 module Api
   class AllowedOriginsController < ApplicationController
     before_action :authenticate_request!
+  include RoleAuthorization
+  before_action -> { require_roles(:admin) }, only: [ :create, :destroy ]
 
     def index
       return if performed?

@@ -1,6 +1,7 @@
 module Api
   class RecepcionController < ApplicationController
     before_action :authenticate_request!
+  include RoleAuthorization
     rate_limit to: 60, within: 1.minute, only: :create
 
     def create

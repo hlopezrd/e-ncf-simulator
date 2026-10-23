@@ -1,6 +1,8 @@
 module Api
   class CertificadosController < ApplicationController
     before_action :authenticate_request!
+  include RoleAuthorization
+  before_action -> { require_roles(:admin) }, only: [ :create, :update, :destroy ]
 
     def index
       return if performed?

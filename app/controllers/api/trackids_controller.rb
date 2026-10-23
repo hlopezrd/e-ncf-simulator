@@ -1,6 +1,7 @@
 module Api
   class TrackidsController < ApplicationController
     before_action :authenticate_request!
+  include RoleAuthorization
 
     def consulta
       return if performed?

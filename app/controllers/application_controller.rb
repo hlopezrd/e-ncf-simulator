@@ -24,6 +24,10 @@ class ApplicationController < ActionController::API
 
   attr_reader :current_auth_token
 
+  def current_user
+    current_auth_token&.user
+  end
+
   def audit!(action, target, details = nil)
     AuditLog.create!(
       actor: current_auth_token&.rnc || "anonymous",

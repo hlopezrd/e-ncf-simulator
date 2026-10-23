@@ -2,24 +2,25 @@ import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const nav = [
-  { to: "/", label: "Dashboard" },
-  { to: "/ecf", label: "e-CF" },
-  { to: "/trackids", label: "TrackIds" },
-  { to: "/empresas", label: "Empresas" },
-  { to: "/certificados", label: "Certificados" },
-  { to: "/validaciones", label: "Validaciones" },
-  { to: "/reglas", label: "Reglas" },
-  { to: "/cors", label: "CORS" },
-  { to: "/usuarios", label: "Usuarios" },
-  { to: "/auditoria", label: "Auditoría" },
-  { to: "/configuracion", label: "Configuración" },
-  { to: "/health", label: "Salud" },
+const allNav = [
+  { to: "/", label: "Dashboard", roles: ["admin", "operator", "viewer"] },
+  { to: "/ecf", label: "e-CF", roles: ["admin", "operator", "viewer"] },
+  { to: "/trackids", label: "TrackIds", roles: ["admin", "operator", "viewer"] },
+  { to: "/empresas", label: "Empresas", roles: ["admin", "operator", "viewer"] },
+  { to: "/certificados", label: "Certificados", roles: ["admin"] },
+  { to: "/validaciones", label: "Validaciones", roles: ["admin", "operator", "viewer"] },
+  { to: "/reglas", label: "Reglas", roles: ["admin", "operator"] },
+  { to: "/cors", label: "CORS", roles: ["admin"] },
+  { to: "/usuarios", label: "Usuarios", roles: ["admin"] },
+  { to: "/auditoria", label: "Auditoría", roles: ["admin", "operator"] },
+  { to: "/configuracion", label: "Configuración", roles: ["admin"] },
+  { to: "/health", label: "Salud", roles: ["admin", "operator", "viewer"] },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
-  const { logout } = useAuth();
+  const { logout, role } = useAuth();
   const loc = useLocation();
+  const nav = allNav.filter((n) => !role || n.roles.includes(role));
   return (
     <div className="layout">
       <aside className="sidebar">
@@ -55,7 +56,10 @@ export function Layout({ children }: { children: ReactNode }) {
             {n.label}
           </Link>
         ))}
-        <button onClick={logout} style={{ marginTop: "var(--space-4)", width: "100%" }}>
+        <div style={{ marginTop: "var(--space-4)", padding: "var(--space-2) var(--space-3)", fontSize: 12, color: "#94a3b8" }}>
+          Rol: <strong style={{ color: "#fff" }}>{role ?? "—"}</strong>
+        </div>
+        <button onClick={logout} style={{ marginTop: "var(--space-2)", width: "100%" }}>
           Salir
         </button>
       </aside>

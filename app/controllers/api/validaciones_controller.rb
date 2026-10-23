@@ -1,6 +1,7 @@
 module Api
   class ValidacionesController < ApplicationController
     before_action :authenticate_request!
+  include RoleAuthorization
 
     def index
       return if performed?

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   post "/api/auth", to: "api/auth#create"
   delete "/api/auth", to: "api/auth#destroy"
+  get "/api/me", to: "api/me#show"
 
   post "/api/recepcion", to: "api/recepcion#create"
 
@@ -18,7 +19,7 @@ Rails.application.routes.draw do
     resources :allowed_origins, only: [ :index, :create, :destroy ], controller: "api/allowed_origins"
     resources :simulation_rules, only: [ :index, :create, :update, :destroy ], controller: "api/simulation_rules"
     resources :usuarios, only: [ :index, :create, :update, :destroy ], controller: "api/usuarios"
-    resources :roles, only: [ :index, :create, :update, :destroy ], controller: "api/roles"
+    resources :roles, only: [ :index ], controller: "api/roles"
     resources :auditoria, only: [ :index ], controller: "api/auditoria"
     resources :certificados, only: [ :index, :create, :update, :destroy ], controller: "api/certificados"
   end
