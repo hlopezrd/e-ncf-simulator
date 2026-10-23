@@ -1,4 +1,14 @@
 # syntax=docker/dockerfile:1
+# Stage 1: build frontend (React + Vite)
+FROM node:20-alpine AS frontend
+WORKDIR /frontend
+RUN corepack enable && corepack prepare yarn@1.22.22 --activate
+COPY frontend/package.json frontend/yarn.lock ./
+RUN yarn install --frozen-lockfile
+COPY frontend/ ./
+RUN yarn build
+
+# Stage 2: Rails API + frontend
 ARG RUBY_VERSION=3.4
 FROM ruby:${RUBY_VERSION}-slim AS base
 
@@ -17,7 +27,7 @@ RUN apt-get update -qq && \
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundled_gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
 COPY . .
@@ -31,6 +41,9 @@ RUN apt-get update -qq && \
 
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
+
+# Copy built frontend into public/
+COPY --from=frontend /frontend/dist /rails/public
 
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails /rails

@@ -21,4 +21,6 @@ Rails.application.routes.draw do
     resources :auditoria, only: [ :index ], controller: "api/auditoria"
     resources :certificados, only: [ :index, :create, :update, :destroy ], controller: "api/certificados"
   end
+  # Serve the React SPA (must be last)
+  get "*path", to: "frontend#index", constraints: ->(req) { !req.xhr? && req.format.html? }
 end
