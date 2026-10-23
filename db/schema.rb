@@ -10,11 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_182405) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_allowed_origins_on_deleted_at"
     t.index ["origin"], name: "index_allowed_origins_on_origin", unique: true
   end
 
@@ -25,9 +27,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
     t.text "details"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
     t.index ["action"], name: "index_audit_logs_on_action"
     t.index ["actor"], name: "index_audit_logs_on_actor"
     t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["deleted_at"], name: "index_audit_logs_on_deleted_at"
   end
 
   create_table "auth_tokens", force: :cascade do |t|
@@ -36,6 +40,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "token_digest", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_auth_tokens_on_deleted_at"
     t.index ["rnc"], name: "index_auth_tokens_on_rnc"
     t.index ["token_digest"], name: "index_auth_tokens_on_token_digest", unique: true
   end
@@ -51,6 +57,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
     t.string "thumbprint"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_certificates_on_deleted_at"
     t.index ["rnc"], name: "index_certificates_on_rnc"
     t.index ["thumbprint"], name: "index_certificates_on_thumbprint", unique: true
   end
@@ -66,6 +74,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
     t.datetime "fecha_recepcion", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_electronic_invoices_on_deleted_at"
     t.index ["encf"], name: "index_electronic_invoices_on_encf"
     t.index ["rnc_emisor", "encf"], name: "index_electronic_invoices_on_rnc_emisor_and_encf", unique: true
     t.index ["rnc_emisor"], name: "index_electronic_invoices_on_rnc_emisor"
@@ -77,6 +87,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_roles_on_deleted_at"
     t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
@@ -88,7 +100,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
     t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
     t.index ["active"], name: "index_simulation_rules_on_active"
+    t.index ["deleted_at"], name: "index_simulation_rules_on_deleted_at"
     t.index ["rule_type"], name: "index_simulation_rules_on_rule_type"
   end
 
@@ -99,6 +113,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["role_id"], name: "index_users_on_role_id"
   end
@@ -111,8 +127,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
     t.string "severidad", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
     t.index ["codigo"], name: "index_validation_errors_on_codigo"
+    t.index ["deleted_at"], name: "index_validation_errors_on_deleted_at"
     t.index ["electronic_invoice_id"], name: "index_validation_errors_on_electronic_invoice_id"
+  end
+
+  create_table "versions", force: :cascade do |t|
+    t.string "whodunnit"
+    t.datetime "created_at"
+    t.bigint "item_id", null: false
+    t.string "item_type", null: false
+    t.string "event", null: false
+    t.text "object", limit: 1073741823
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   add_foreign_key "users", "roles"

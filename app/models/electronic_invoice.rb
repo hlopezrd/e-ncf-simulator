@@ -1,4 +1,6 @@
 class ElectronicInvoice < ApplicationRecord
+  acts_as_paranoid
+  has_paper_trail
   has_many :validation_errors, dependent: :destroy
 
   ESTADOS = %w[En\ Proceso Aceptado Aceptado\ Condicional Rechazado].freeze

@@ -1,4 +1,6 @@
 class AuthToken < ApplicationRecord
+  acts_as_paranoid
+  has_paper_trail
   attr_accessor :token
 
   validates :token_digest, presence: true, uniqueness: true

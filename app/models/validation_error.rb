@@ -1,4 +1,6 @@
 class ValidationError < ApplicationRecord
+  acts_as_paranoid
+  has_paper_trail
   belongs_to :electronic_invoice
 
   SEVERIDADES = %w[ERROR WARNING].freeze
