@@ -19,7 +19,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "nokogiri", "~> 1.18"
 
 # Keep JSON gem compatible with Rails 8.0 (avoid 3.x quirks_mode removal)
-gem "json", "~> 2.9"
+gem "json", "~> 3.1"
 
 # UUID generation is provided by Ruby stdlib (SecureRandom)
 
