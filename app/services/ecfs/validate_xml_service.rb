@@ -13,6 +13,8 @@ module Ecfs
       new(xml).call
     end
 
+    MAX_XML_BYTES = 1.megabyte
+
     def initialize(xml)
       @xml = xml
       @errors = []
@@ -25,8 +27,16 @@ module Ecfs
         return build_result(nil, nil, nil, nil, nil, nil, false)
       end
 
+      if @xml.bytesize > MAX_XML_BYTES
+        @errors << error("E011", "xml", "El XML excede el tamaño máximo permitido", "ERROR")
+        return build_result(nil, nil, nil, nil, nil, nil, false)
+      end
+
       begin
-        doc = Nokogiri::XML(@xml) { |config| config.strict }
+        doc = Nokogiri::XML(@xml) do |config|
+          config.strict
+          config.nonet
+        end
       rescue Nokogiri::XML::SyntaxError => e
         @errors << error("E002", "xml", "El XML está mal formado: #{e.message}", "ERROR")
         return build_result(nil, nil, nil, nil, nil, nil, false)

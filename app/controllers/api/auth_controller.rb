@@ -1,5 +1,7 @@
 module Api
   class AuthController < ApplicationController
+    rate_limit to: 20, within: 1.minute, only: :create
+
     def create
       rnc = params[:rnc]
       usuario = params[:usuario]
