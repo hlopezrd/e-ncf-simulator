@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { certificadosApi } from "../lib/api";
 import Swal from "sweetalert2";
@@ -12,28 +12,20 @@ export function Certificados() {
 
   const [rnc, setRnc] = useState("");
   const [aliasName, setAliasName] = useState("");
-  const [subject, setSubject] = useState("");
-  const [issuer, setIssuer] = useState("");
-  const [serial, setSerial] = useState("");
-  const [thumbprint, setThumbprint] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editAlias, setEditAlias] = useState("");
-  const [editSubject, setEditSubject] = useState("");
-  const [editIssuer, setEditIssuer] = useState("");
 
   const createMut = useMutation({
-    mutationFn: () =>
-      certificadosApi.create({
-        rnc,
-        alias_name: aliasName || undefined,
-        subject: subject || undefined,
-        issuer: issuer || undefined,
-        serial: serial || undefined,
-        thumbprint: thumbprint || undefined,
-      }),
+    mutationFn: () => {
+      if (!file) throw new Error("Falta el archivo");
+      return certificadosApi.create({ rnc, alias_name: aliasName || undefined, file });
+    },
     onSuccess: () => {
-      setRnc(""); setAliasName(""); setSubject(""); setIssuer(""); setSerial(""); setThumbprint("");
+      setRnc(""); setAliasName(""); setFile(null);
+      if (fileRef.current) fileRef.current.value = "";
       qc.invalidateQueries({ queryKey: ["certificados"] });
     },
   });
@@ -44,15 +36,13 @@ export function Certificados() {
   });
 
   const saveEdit = useMutation({
-    mutationFn: () => certificadosApi.update(editingId!, { alias_name: editAlias, subject: editSubject, issuer: editIssuer }),
+    mutationFn: () => certificadosApi.update(editingId!, { alias_name: editAlias }),
     onSuccess: () => { setEditingId(null); qc.invalidateQueries({ queryKey: ["certificados"] }); },
   });
 
-  const startEdit = (c: { id: number; alias: string | null; subject: string | null; issuer: string | null }) => {
+  const startEdit = (c: { id: number; alias: string | null }) => {
     setEditingId(c.id);
     setEditAlias(c.alias ?? "");
-    setEditSubject(c.subject ?? "");
-    setEditIssuer(c.issuer ?? "");
   };
 
   return (
@@ -61,17 +51,27 @@ export function Certificados() {
 
       <div className="card" style={{ marginBottom: "var(--space-4)" }}>
         <h3>Registrar certificado</h3>
+        <p style={{ color: "var(--color-muted)", fontSize: 13, marginBottom: "var(--space-3)" }}>
+          Sube el archivo del certificado (.crt / .pem). Los metadatos se extraen automáticamente.
+        </p>
         <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", alignItems: "center" }}>
           <input placeholder="RNC" value={rnc} onChange={(e) => setRnc(e.target.value)} style={{ width: 140 }} />
           <input placeholder="Alias" value={aliasName} onChange={(e) => setAliasName(e.target.value)} style={{ width: 140 }} />
-          <input placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} style={{ width: 160 }} />
-          <input placeholder="Issuer" value={issuer} onChange={(e) => setIssuer(e.target.value)} style={{ width: 160 }} />
-          <input placeholder="Serial" value={serial} onChange={(e) => setSerial(e.target.value)} style={{ width: 140 }} />
-          <input placeholder="Thumbprint" value={thumbprint} onChange={(e) => setThumbprint(e.target.value)} style={{ width: 160 }} />
-          <button className="primary" onClick={() => createMut.mutate()} disabled={!rnc}>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".crt,.pem,.cer"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          />
+          <button className="primary" onClick={() => createMut.mutate()} disabled={!rnc || !file}>
             Registrar
           </button>
         </div>
+        {createMut.isError && (
+          <p style={{ color: "var(--color-danger)", marginTop: "var(--space-2)" }}>
+            {(createMut.error as Error)?.message ?? "Error al registrar"}
+          </p>
+        )}
       </div>
 
       {isLoading && <div className="skeleton" style={{ height: 200 }} />}
@@ -87,6 +87,7 @@ export function Certificados() {
               <th>Issuer</th>
               <th>Válido desde</th>
               <th>Válido hasta</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -97,10 +98,11 @@ export function Certificados() {
                   <>
                     <td>{c.rnc}</td>
                     <td><input value={editAlias} onChange={(e) => setEditAlias(e.target.value)} /></td>
-                    <td><input value={editSubject} onChange={(e) => setEditSubject(e.target.value)} /></td>
-                    <td><input value={editIssuer} onChange={(e) => setEditIssuer(e.target.value)} /></td>
+                    <td>{c.subject ?? "—"}</td>
+                    <td>{c.issuer ?? "—"}</td>
                     <td>{c.notBefore ? new Date(c.notBefore).toLocaleDateString() : "—"}</td>
                     <td>{c.notAfter ? new Date(c.notAfter).toLocaleDateString() : "—"}</td>
+                    <td><span className={`badge ${c.active ? "success" : "secondary"}`}>{c.active ? "Activo" : "Inactivo"}</span></td>
                     <td style={{ display: "flex", gap: "var(--space-2)" }}>
                       <button className="primary" onClick={() => saveEdit.mutate()}>Guardar</button>
                       <button onClick={() => setEditingId(null)}>Cancelar</button>
@@ -110,16 +112,21 @@ export function Certificados() {
                   <>
                     <td>{c.rnc}</td>
                     <td>{c.alias ?? "—"}</td>
-                    <td>{c.subject ?? "—"}</td>
-                    <td>{c.issuer ?? "—"}</td>
+                    <td style={{ fontSize: 12 }}>{c.subject ?? "—"}</td>
+                    <td style={{ fontSize: 12 }}>{c.issuer ?? "—"}</td>
                     <td>{c.notBefore ? new Date(c.notBefore).toLocaleDateString() : "—"}</td>
                     <td>{c.notAfter ? new Date(c.notAfter).toLocaleDateString() : "—"}</td>
+                    <td>
+                      <span className={`badge ${c.active ? (new Date(c.notAfter ?? "") >= new Date() ? "success" : "danger") : "secondary"}`}>
+                        {c.active ? (c.notAfter && new Date(c.notAfter) >= new Date() ? "Vigente" : "Vencido") : "Inactivo"}
+                      </span>
+                    </td>
                     <td style={{ display: "flex", gap: "var(--space-2)" }}>
                       <button onClick={() => startEdit(c)}>Editar</button>
                       <button onClick={async () => {
-                    const res = await Swal.fire({ title: "Eliminar certificado", text: c.rnc, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
-                    if (res.isConfirmed) deleteMut.mutate(c.id);
-                  }}>Eliminar</button>
+                        const res = await Swal.fire({ title: "Eliminar certificado", text: c.rnc, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
+                        if (res.isConfirmed) deleteMut.mutate(c.id);
+                      }}>Eliminar</button>
                     </td>
                   </>
                 )}
@@ -127,7 +134,7 @@ export function Certificados() {
             ))}
             {data.data.length === 0 && (
               <tr>
-                <td colSpan={7} style={{ textAlign: "center", color: "var(--color-muted)" }}>
+                <td colSpan={8} style={{ textAlign: "center", color: "var(--color-muted)" }}>
                   Sin certificados registrados
                 </td>
               </tr>

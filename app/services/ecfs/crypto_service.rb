@@ -61,7 +61,15 @@ module Ecfs
       doc.to_xml
     end
 
-    def self.verify(xml)
+    def self.verify(xml, registered_certificate: nil)
+      if registered_certificate
+        verify_with_registered(xml, registered_certificate)
+      else
+        verify_embedded(xml)
+      end
+    end
+
+    def self.verify_embedded(xml)
       doc = Nokogiri::XML(xml)
       signature_node = doc.xpath("//*[local-name()='Signature']").first
       return false unless signature_node
@@ -72,7 +80,6 @@ module Ecfs
       return false unless signed_info_node && signature_value_node && x509_node
 
       cert = OpenSSL::X509::Certificate.new(Base64.decode64(x509_node.content.strip))
-      # Validate certificate validity period.
       now = Time.now
       return false if now < cert.not_before || now > cert.not_after
 
@@ -82,7 +89,41 @@ module Ecfs
       valid_sig = cert.public_key.verify(OpenSSL::Digest::SHA256.new, signature, canonical_signed_info)
       return false unless valid_sig
 
-      # Recompute digest of document without signature
+      doc_copy = doc.dup
+      doc_copy.xpath("//*[local-name()='Signature']").remove
+      canonical_doc = doc_copy.canonicalize
+      computed_digest = Base64.strict_encode64(Digest::SHA256.digest(canonical_doc))
+
+      reference = signed_info_node.xpath("./*[local-name()='Reference']").first
+      return false unless reference
+      digest_value_node = reference.xpath("./*[local-name()='DigestValue']").first
+      return false unless digest_value_node
+      stored_digest = digest_value_node.content.strip
+
+      computed_digest == stored_digest
+    rescue StandardError
+      false
+    end
+
+    def self.verify_with_registered(xml, registered_certificate)
+      cert = OpenSSL::X509::Certificate.new(registered_certificate.certificate_pem)
+      now = Time.now
+      return false if now < cert.not_before || now > cert.not_after
+
+      doc = Nokogiri::XML(xml)
+      signature_node = doc.xpath("//*[local-name()='Signature']").first
+      return false unless signature_node
+
+      signed_info_node = signature_node.xpath("./*[local-name()='SignedInfo']").first
+      signature_value_node = signature_node.xpath("./*[local-name()='SignatureValue']").first
+      return false unless signed_info_node && signature_value_node
+
+      signature = Base64.decode64(signature_value_node.content.strip)
+      canonical_signed_info = signed_info_node.canonicalize
+
+      valid_sig = cert.public_key.verify(OpenSSL::Digest::SHA256.new, signature, canonical_signed_info)
+      return false unless valid_sig
+
       doc_copy = doc.dup
       doc_copy.xpath("//*[local-name()='Signature']").remove
       canonical_doc = doc_copy.canonicalize

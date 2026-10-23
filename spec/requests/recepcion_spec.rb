@@ -1,4 +1,5 @@
 require "rails_helper"
+require "base64"
 
 RSpec.describe "Recepcion", type: :request do
   before do
@@ -9,6 +10,18 @@ RSpec.describe "Recepcion", type: :request do
       u.role = role
       u.active = true
       u.password = "password-prueba"
+    end
+
+    xml = File.read(Rails.root.join("spec", "fixtures", "xml", "valido_xsd.xml"))
+    doc = Nokogiri::XML(xml)
+    node = doc.xpath("//*[local-name()='X509Certificate']").first
+    pem = "-----BEGIN CERTIFICATE-----\n" + node.content.strip.scan(/.{1,64}/).join("\n") + "\n-----END CERTIFICATE-----\n"
+    cert = OpenSSL::X509::Certificate.new(Base64.decode64(node.content.strip))
+    tp = Digest::SHA256.hexdigest(cert.to_der)
+    Certificate.find_or_create_by!(rnc: "101234567", thumbprint: tp) do |c|
+      c.certificate_pem = cert.to_pem
+      c.alias_name = "simulator"
+      c.active = true
     end
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_205841) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_210000) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -60,7 +60,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_205841) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.text "certificate_pem"
+    t.boolean "active", default: true, null: false
     t.index ["deleted_at"], name: "index_certificates_on_deleted_at"
+    t.index ["rnc"], name: "index_certificates_active_rnc", unique: true, where: "active = 1 AND deleted_at IS NULL"
     t.index ["rnc"], name: "index_certificates_on_rnc"
     t.index ["thumbprint"], name: "index_certificates_on_thumbprint", unique: true
   end

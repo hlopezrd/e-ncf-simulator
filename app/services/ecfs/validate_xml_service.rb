@@ -1,3 +1,5 @@
+require "base64"
+
 module Ecfs
   class ValidateXmlService
     def self.xsd_validation_enabled?
@@ -95,8 +97,37 @@ module Ecfs
           @errors << error("E014", "signature", "Falta SignedInfo en la firma digital", "ERROR")
         end
 
-        if self.class.signature_verification_enabled? && @errors.empty?
-          unless Ecfs::CryptoService.verify(@xml)
+        registered_cert = nil
+        if rnc.present?
+          registered_cert = Certificate.active.find_by(rnc: rnc)
+        end
+
+        if registered_cert.nil? && rnc.present?
+          @errors << error("E016", "certificate", "No hay certificado registrado para el RNC emisor", "ERROR")
+        end
+
+        if registered_cert && (Time.current < registered_cert.not_before || Time.current > registered_cert.not_after)
+          @errors << error("E017", "certificate", "El certificado registrado no está vigente", "ERROR")
+        end
+
+        # Comparar thumbprint del certificado embebido con el registrado.
+        if registered_cert && signature_node
+          embedded_node = signature_node.xpath(".//*[local-name()='X509Certificate']").first
+          if embedded_node
+            begin
+              embedded_cert = OpenSSL::X509::Certificate.new(Base64.decode64(embedded_node.content.strip))
+              embedded_tp = Digest::SHA256.hexdigest(embedded_cert.to_der)
+              if embedded_tp != registered_cert.thumbprint
+                @errors << error("E018", "certificate", "El certificado del XML no corresponde al registrado para el RNC", "ERROR")
+              end
+            rescue StandardError
+              @errors << error("E018", "certificate", "El certificado del XML no corresponde al registrado para el RNC", "ERROR")
+            end
+          end
+        end
+
+        if self.class.signature_verification_enabled? && @errors.empty? && registered_cert
+          unless Ecfs::CryptoService.verify(@xml, registered_certificate: registered_cert)
             @errors << error("E015", "signature", "La firma digital no es válida", "ERROR")
           end
         end

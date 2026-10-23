@@ -9,10 +9,13 @@ export async function apiFetch<T>(
   options: RequestInit = {},
   _token?: string | null
 ): Promise<T> {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string>),
-  };
+  const isForm = options.body instanceof FormData;
+  const headers: Record<string, string> = isForm
+    ? { ...(options.headers as Record<string, string>) }
+    : {
+        "Content-Type": "application/json",
+        ...(options.headers as Record<string, string>),
+      };
 
   const res = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include" });
   if (res.status === 401) {
@@ -113,6 +116,7 @@ export interface CertificadoItem {
   notBefore: string | null;
   notAfter: string | null;
   thumbprint: string | null;
+  active: boolean;
   createdAt: string;
 }
 
@@ -123,8 +127,13 @@ export interface CertificadoListResponse {
 
 export const certificadosApi = {
   list: () => apiFetch<CertificadoListResponse>("/api/certificados"),
-  create: (data: { rnc: string; alias_name?: string; subject?: string; issuer?: string; serial?: string; thumbprint?: string }) =>
-    apiFetch<CertificadoItem>("/api/certificados", { method: "POST", body: JSON.stringify(data) }),
+  create: (data: { rnc: string; alias_name?: string; file: File }) => {
+    const fd = new FormData();
+    fd.append("rnc", data.rnc);
+    if (data.alias_name) fd.append("alias_name", data.alias_name);
+    fd.append("file", data.file);
+    return apiFetch<CertificadoItem>("/api/certificados", { method: "POST", body: fd });
+  },
   update: (id: number, data: { alias_name?: string; subject?: string; issuer?: string }) =>
     apiFetch<CertificadoItem>(`/api/certificados/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   remove: (id: number) => apiFetch<void>(`/api/certificados/${id}`, { method: "DELETE" }),
