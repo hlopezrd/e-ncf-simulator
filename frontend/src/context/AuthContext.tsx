@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 import type { AuthCredentials, AuthResponse } from "../types/auth";
 import { authApi } from "../lib/api";
+import { setToken as storeToken } from "../lib/tokenStore";
 
 interface AuthContextValue {
   token: string | null;
@@ -17,9 +18,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (creds: AuthCredentials) => {
     const res: AuthResponse = await authApi.login(creds);
     setToken(res.token);
+    storeToken(res.token);
   }, []);
 
-  const logout = useCallback(() => setToken(null), []);
+  const logout = useCallback(() => {
+    setToken(null);
+    storeToken(null);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ token, isAuthenticated: !!token, login, logout }}>

@@ -2,16 +2,19 @@ import type { AuthResponse } from "../types/auth";
 
 const BASE = "";
 
+import { getToken } from "./tokenStore";
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
   token?: string | null
 ): Promise<T> {
+  const t = token ?? getToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),
   };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (t) headers["Authorization"] = `Bearer ${t}`;
 
   const res = await fetch(`${BASE}${path}`, { ...options, headers });
   if (!res.ok) {
