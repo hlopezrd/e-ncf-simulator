@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   before_action :set_request_context
+  before_action :set_default_whodunnit
   before_action :limit_request_size
   after_action :clear_request_context
 
@@ -46,6 +47,10 @@ class ApplicationController < ActionController::API
     Thread.current[:request_id] = request.request_id
   end
 
+  def set_default_whodunnit
+    PaperTrail.request.whodunnit = "anonymous"
+  end
+
   def clear_request_context
     Thread.current[:request_id] = nil
   end
@@ -54,6 +59,7 @@ class ApplicationController < ActionController::API
     header = request.headers["Authorization"]
     token = header&.split(" ")&.last
     @current_auth_token = Auth::TokenService.find(token)
+    PaperTrail.request.whodunnit = @current_auth_token&.rnc || "anonymous"
     unless @current_auth_token
       render json: { error: "Token inválido o expirado", request_id: request.request_id }, status: :unauthorized
     end
