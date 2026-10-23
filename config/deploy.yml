@@ -18,6 +18,10 @@ proxy:
     interval: 1
     timeout: 10
 
+# Deploy timeout (seconds to wait for container to become healthy)
+deploy_timeout: 60
+readiness_delay: 0
+
 # Credentials for your image host (GHCR).
 registry:
   server: ghcr.io
