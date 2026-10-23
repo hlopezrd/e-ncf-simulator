@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { allowedOriginsApi } from "../lib/api";
+import Swal from "sweetalert2";
 
 export function AllowedOrigins() {
   const qc = useQueryClient();
@@ -49,7 +50,10 @@ export function AllowedOrigins() {
                 <td>{o.origin}</td>
                 <td>{new Date(o.createdAt).toLocaleString()}</td>
                 <td>
-                  <button onClick={() => deleteMut.mutate(o.id)}>Eliminar</button>
+                  <button onClick={async () => {
+                    const r = await Swal.fire({ title: "Eliminar origen", text: o.origin, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
+                    if (r.isConfirmed) deleteMut.mutate(o.id);
+                  }}>Eliminar</button>
                 </td>
               </tr>
             ))}

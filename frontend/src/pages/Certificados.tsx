@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { certificadosApi } from "../lib/api";
+import Swal from "sweetalert2";
 
 export function Certificados() {
   const qc = useQueryClient();
@@ -115,7 +116,10 @@ export function Certificados() {
                     <td>{c.notAfter ? new Date(c.notAfter).toLocaleDateString() : "—"}</td>
                     <td style={{ display: "flex", gap: "var(--space-2)" }}>
                       <button onClick={() => startEdit(c)}>Editar</button>
-                      <button onClick={() => deleteMut.mutate(c.id)}>Eliminar</button>
+                      <button onClick={async () => {
+                    const res = await Swal.fire({ title: "Eliminar certificado", text: c.rnc, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
+                    if (res.isConfirmed) deleteMut.mutate(c.id);
+                  }}>Eliminar</button>
                     </td>
                   </>
                 )}

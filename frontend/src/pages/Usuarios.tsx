@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usuariosApi, rolesApi } from "../lib/api";
+import Swal from "sweetalert2";
 
 export function Usuarios() {
   const qc = useQueryClient();
@@ -131,7 +132,10 @@ export function Usuarios() {
                         <button onClick={() => startEdit({ ...u, roleId: data.roles.find((r) => r.name === u.role)?.id })}>
                           Editar
                         </button>
-                        <button onClick={() => deleteUser.mutate(u.id)}>Eliminar</button>
+                        <button onClick={async () => {
+                          const res = await Swal.fire({ title: "Eliminar usuario", text: u.email, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
+                          if (res.isConfirmed) deleteUser.mutate(u.id);
+                        }}>Eliminar</button>
                       </td>
                     </>
                   )}

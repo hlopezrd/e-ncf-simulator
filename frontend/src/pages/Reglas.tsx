@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { reglasApi } from "../lib/api";
+import Swal from "sweetalert2";
 
 export function Reglas() {
   const qc = useQueryClient();
@@ -106,7 +107,10 @@ export function Reglas() {
                     <td>{r.value ?? "—"}</td>
                     <td style={{ display: "flex", gap: "var(--space-2)" }}>
                       <button onClick={() => startEdit(r)}>Editar</button>
-                      <button onClick={() => deleteMut.mutate(r.id)}>Eliminar</button>
+                      <button onClick={async () => {
+                        const res = await Swal.fire({ title: "Eliminar regla", text: r.name, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
+                        if (res.isConfirmed) deleteMut.mutate(r.id);
+                      }}>Eliminar</button>
                     </td>
                   </>
                 )}

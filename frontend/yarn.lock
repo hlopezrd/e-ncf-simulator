@@ -877,6 +877,11 @@ strip-indent@^3.0.0:
   dependencies:
     min-indent "^1.0.0"
 
+sweetalert2@^11.26.25:
+  version "11.26.25"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.26.25.tgz#ba24ffb79c67648ac51f834620baa15866a56e35"
+  integrity sha512-+hunCOJdJ6FLj04T9YSLvvZXRjsvIkTeTKP2e4VF8CaBias961BTnWiSFAy7F/CM5eq3QK2Rraoc5Gzftslvkg==
+
 tinybench@^6.2.2:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/tinybench/-/tinybench-6.2.2.tgz#e03ffd4d46fabebae1d5bb292bd25e39505551ee"
