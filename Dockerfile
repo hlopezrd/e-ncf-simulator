@@ -37,4 +37,4 @@ RUN useradd rails --create-home --shell /bin/bash && \
 USER rails
 
 EXPOSE 3000
-CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
+CMD ["sh", "-c", "bin/rails db:prepare && bin/rails server -b 0.0.0.0"]
