@@ -4,6 +4,10 @@ module Ecfs
       ENV.fetch("XSD_VALIDATION_ENABLED") { "true" } == "true"
     end
 
+    def self.signature_verification_enabled?
+      ENV.fetch("SIGNATURE_VERIFICATION_ENABLED") { "true" } == "true"
+    end
+
     Result = Struct.new(
       :valid?, :errors, :warnings, :document, :rnc_emisor, :encf,
       :tipo_comprobante, :fecha_emision, :totales_present?, keyword_init: true
@@ -89,6 +93,12 @@ module Ecfs
         end
         unless signature_node.xpath("./*[local-name()='SignedInfo']").any?
           @errors << error("E014", "signature", "Falta SignedInfo en la firma digital", "ERROR")
+        end
+
+        if self.class.signature_verification_enabled? && @errors.empty?
+          unless Ecfs::CryptoService.verify(@xml)
+            @errors << error("E015", "signature", "La firma digital no es válida", "ERROR")
+          end
         end
       end
 
