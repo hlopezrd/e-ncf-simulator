@@ -12,12 +12,13 @@ Rails.application.routes.draw do
   scope "/api" do
     resources :ecf, only: [ :index, :show ], param: :track_id, controller: "api/ecfs"
     resources :empresas, only: [ :index ], controller: "api/empresas"
-    resources :certificados, only: [ :index ], controller: "api/certificados"
     resources :validaciones, only: [ :index ], controller: "api/validaciones"
-    resources :reglas, only: [ :index ], controller: "api/reglas"
+    resources :reglas, only: [ :index, :create, :update, :destroy ], controller: "api/reglas"
     resources :allowed_origins, only: [ :index, :create, :destroy ], controller: "api/allowed_origins"
     resources :simulation_rules, only: [ :index, :create, :update, :destroy ], controller: "api/simulation_rules"
-    resources :usuarios, only: [ :index ], controller: "api/usuarios"
+    resources :usuarios, only: [ :index, :create, :update, :destroy ], controller: "api/usuarios"
+    resources :roles, only: [ :index, :create, :update, :destroy ], controller: "api/roles"
     resources :auditoria, only: [ :index ], controller: "api/auditoria"
+    resources :certificados, only: [ :index, :create, :update, :destroy ], controller: "api/certificados"
   end
 end

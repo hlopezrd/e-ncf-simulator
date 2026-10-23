@@ -4,7 +4,6 @@ module Api
 
     def index
       return if performed?
-
       records = Certificate.order(created_at: :desc)
       render json: {
         data: records.map { |c| cert_json(c) },
@@ -12,7 +11,42 @@ module Api
       }
     end
 
+    def create
+      return if performed?
+      record = Certificate.new(cert_params)
+      if record.save
+        render json: cert_json(record), status: :created
+      else
+        render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+
+    def update
+      return if performed?
+      record = Certificate.find(params[:id])
+      if record.update(cert_params)
+        render json: cert_json(record)
+      else
+        render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "No encontrado" }, status: :not_found
+    end
+
+    def destroy
+      return if performed?
+      record = Certificate.find(params[:id])
+      record.destroy
+      head :no_content
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "No encontrado" }, status: :not_found
+    end
+
     private
+
+    def cert_params
+      params.permit(:rnc, :alias_name, :subject, :issuer, :serial, :not_before, :not_after, :thumbprint)
+    end
 
     def cert_json(c)
       {

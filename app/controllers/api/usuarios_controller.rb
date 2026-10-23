@@ -4,7 +4,6 @@ module Api
 
     def index
       return if performed?
-
       users = User.includes(:role).order(created_at: :desc)
       roles = Role.order(:name)
 
@@ -15,7 +14,48 @@ module Api
       }
     end
 
+    def create
+      return if performed?
+      role = Role.find(params[:role_id])
+      record = User.new(user_params.merge(role: role))
+      if record.save
+        render json: user_json(record), status: :created
+      else
+        render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordNotFound
+      render json: { errors: [ "Rol no encontrado" ] }, status: :unprocessable_entity
+    end
+
+    def update
+      return if performed?
+      record = User.find(params[:id])
+      if params[:role_id].present?
+        record.role = Role.find(params[:role_id])
+      end
+      if record.update(user_params.except(:role_id))
+        render json: user_json(record)
+      else
+        render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "No encontrado" }, status: :not_found
+    end
+
+    def destroy
+      return if performed?
+      record = User.find(params[:id])
+      record.destroy
+      head :no_content
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "No encontrado" }, status: :not_found
+    end
+
     private
+
+    def user_params
+      params.permit(:name, :email, :active, :role_id)
+    end
 
     def user_json(u)
       {
@@ -23,6 +63,7 @@ module Api
         name: u.name,
         email: u.email,
         role: u.role.name,
+        roleId: u.role_id,
         active: u.active,
         createdAt: u.created_at.iso8601
       }
