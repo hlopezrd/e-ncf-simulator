@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_154722) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_155446) do
+  create_table "allowed_origins", force: :cascade do |t|
+    t.string "origin", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["origin"], name: "index_allowed_origins_on_origin", unique: true
+  end
+
   create_table "auth_tokens", force: :cascade do |t|
     t.string "rnc", null: false
     t.datetime "expires_at", null: false

@@ -407,7 +407,7 @@ El entorno de producción del simulador es `https://sim.ecfgateway.com` (Kamal +
 
 ## Lo que falta (por diseño o futuro)
 
-- Validación XSD completa (hook `XSD_VALIDATION_ENABLED` listo; falta incorporar schemas oficiales).
+- [x] Validación XSD completa (activada por defecto; schemas oficiales en lib/xsd/).
 - Firma digital real (criptografía).
 - Deploy real con Kamal (falta servidor destino, registry y secretos).
 - Limpieza automática de tokens expirados (no requerido en v1).
