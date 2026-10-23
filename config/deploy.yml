@@ -14,6 +14,10 @@ proxy:
   ssl: true
   host: sim.ecfgateway.com
 
+healthcheck:
+  path: /health
+  port: 3000
+
 # Credentials for your image host (GHCR).
 registry:
   server: ghcr.io
