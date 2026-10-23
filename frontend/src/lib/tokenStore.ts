@@ -1,9 +1,10 @@
-let token: string | null = null;
+const KEY = "ecf_token";
 
 export function setToken(t: string | null) {
-  token = t;
+  if (t) sessionStorage.setItem(KEY, t);
+  else sessionStorage.removeItem(KEY);
 }
 
 export function getToken(): string | null {
-  return token;
+  return sessionStorage.getItem(KEY);
 }

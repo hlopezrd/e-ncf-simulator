@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 import type { AuthCredentials, AuthResponse } from "../types/auth";
 import { authApi } from "../lib/api";
-import { setToken as storeToken } from "../lib/tokenStore";
+import { setToken as storeToken, getToken } from "../lib/tokenStore";
 
 interface AuthContextValue {
   token: string | null;
@@ -13,7 +13,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(() => getToken());
 
   const login = useCallback(async (creds: AuthCredentials) => {
     const res: AuthResponse = await authApi.login(creds);
