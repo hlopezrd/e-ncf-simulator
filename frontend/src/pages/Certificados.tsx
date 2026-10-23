@@ -16,6 +16,11 @@ export function Certificados() {
   const [serial, setSerial] = useState("");
   const [thumbprint, setThumbprint] = useState("");
 
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editAlias, setEditAlias] = useState("");
+  const [editSubject, setEditSubject] = useState("");
+  const [editIssuer, setEditIssuer] = useState("");
+
   const createMut = useMutation({
     mutationFn: () =>
       certificadosApi.create({
@@ -36,6 +41,18 @@ export function Certificados() {
     mutationFn: (id: number) => certificadosApi.remove(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["certificados"] }),
   });
+
+  const saveEdit = useMutation({
+    mutationFn: () => certificadosApi.update(editingId!, { alias_name: editAlias, subject: editSubject, issuer: editIssuer }),
+    onSuccess: () => { setEditingId(null); qc.invalidateQueries({ queryKey: ["certificados"] }); },
+  });
+
+  const startEdit = (c: { id: number; alias: string | null; subject: string | null; issuer: string | null }) => {
+    setEditingId(c.id);
+    setEditAlias(c.alias ?? "");
+    setEditSubject(c.subject ?? "");
+    setEditIssuer(c.issuer ?? "");
+  };
 
   return (
     <div>
@@ -75,15 +92,33 @@ export function Certificados() {
           <tbody>
             {data.data.map((c) => (
               <tr key={c.id}>
-                <td>{c.rnc}</td>
-                <td>{c.alias ?? "—"}</td>
-                <td>{c.subject ?? "—"}</td>
-                <td>{c.issuer ?? "—"}</td>
-                <td>{c.notBefore ? new Date(c.notBefore).toLocaleDateString() : "—"}</td>
-                <td>{c.notAfter ? new Date(c.notAfter).toLocaleDateString() : "—"}</td>
-                <td>
-                  <button onClick={() => deleteMut.mutate(c.id)}>Eliminar</button>
-                </td>
+                {editingId === c.id ? (
+                  <>
+                    <td>{c.rnc}</td>
+                    <td><input value={editAlias} onChange={(e) => setEditAlias(e.target.value)} /></td>
+                    <td><input value={editSubject} onChange={(e) => setEditSubject(e.target.value)} /></td>
+                    <td><input value={editIssuer} onChange={(e) => setEditIssuer(e.target.value)} /></td>
+                    <td>{c.notBefore ? new Date(c.notBefore).toLocaleDateString() : "—"}</td>
+                    <td>{c.notAfter ? new Date(c.notAfter).toLocaleDateString() : "—"}</td>
+                    <td style={{ display: "flex", gap: "var(--space-2)" }}>
+                      <button className="primary" onClick={() => saveEdit.mutate()}>Guardar</button>
+                      <button onClick={() => setEditingId(null)}>Cancelar</button>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td>{c.rnc}</td>
+                    <td>{c.alias ?? "—"}</td>
+                    <td>{c.subject ?? "—"}</td>
+                    <td>{c.issuer ?? "—"}</td>
+                    <td>{c.notBefore ? new Date(c.notBefore).toLocaleDateString() : "—"}</td>
+                    <td>{c.notAfter ? new Date(c.notAfter).toLocaleDateString() : "—"}</td>
+                    <td style={{ display: "flex", gap: "var(--space-2)" }}>
+                      <button onClick={() => startEdit(c)}>Editar</button>
+                      <button onClick={() => deleteMut.mutate(c.id)}>Eliminar</button>
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
             {data.data.length === 0 && (

@@ -9,6 +9,11 @@ export function Reglas() {
   const [ruleType, setRuleType] = useState("");
   const [value, setValue] = useState("");
 
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editValue, setEditValue] = useState("");
+  const [editActive, setEditActive] = useState(true);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["reglas", active],
     queryFn: () => reglasApi.list(active === "" ? undefined : active === "true"),
@@ -28,6 +33,18 @@ export function Reglas() {
     mutationFn: ({ id, active }: { id: number; active: boolean }) => reglasApi.update(id, { active }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["reglas"] }),
   });
+
+  const saveEdit = useMutation({
+    mutationFn: () => reglasApi.update(editingId!, { name: editName, value: editValue, active: editActive }),
+    onSuccess: () => { setEditingId(null); qc.invalidateQueries({ queryKey: ["reglas"] }); },
+  });
+
+  const startEdit = (r: { id: number; name: string; value: string | null; active: boolean }) => {
+    setEditingId(r.id);
+    setEditName(r.name);
+    setEditValue(r.value ?? "");
+    setEditActive(r.active);
+  };
 
   return (
     <div>
@@ -58,30 +75,46 @@ export function Reglas() {
               <th>Tipo</th>
               <th>Activa</th>
               <th>Valor</th>
-              <th>Descripción</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {data.data.map((r) => (
               <tr key={r.id}>
-                <td>{r.name}</td>
-                <td><span className="badge info">{r.ruleType}</span></td>
-                <td>
-                  <button onClick={() => toggleMut.mutate({ id: r.id, active: !r.active })}>
-                    {r.active ? "Sí" : "No"}
-                  </button>
-                </td>
-                <td>{r.value ?? "—"}</td>
-                <td style={{ color: "var(--color-muted)", fontSize: 13 }}>{r.description ?? "—"}</td>
-                <td>
-                  <button onClick={() => deleteMut.mutate(r.id)}>Eliminar</button>
-                </td>
+                {editingId === r.id ? (
+                  <>
+                    <td><input value={editName} onChange={(e) => setEditName(e.target.value)} /></td>
+                    <td><span className="badge info">{r.ruleType}</span></td>
+                    <td>
+                      <input type="checkbox" checked={editActive} onChange={(e) => setEditActive(e.target.checked)} />
+                    </td>
+                    <td><input value={editValue} onChange={(e) => setEditValue(e.target.value)} /></td>
+                    <td style={{ display: "flex", gap: "var(--space-2)" }}>
+                      <button className="primary" onClick={() => saveEdit.mutate()}>Guardar</button>
+                      <button onClick={() => setEditingId(null)}>Cancelar</button>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td>{r.name}</td>
+                    <td><span className="badge info">{r.ruleType}</span></td>
+                    <td>
+                      <button onClick={() => toggleMut.mutate({ id: r.id, active: !r.active })}>
+                        {r.active ? "Sí" : "No"}
+                      </button>
+                    </td>
+                    <td>{r.value ?? "—"}</td>
+                    <td style={{ display: "flex", gap: "var(--space-2)" }}>
+                      <button onClick={() => startEdit(r)}>Editar</button>
+                      <button onClick={() => deleteMut.mutate(r.id)}>Eliminar</button>
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
             {data.data.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ textAlign: "center", color: "var(--color-muted)" }}>
+                <td colSpan={5} style={{ textAlign: "center", color: "var(--color-muted)" }}>
                   Sin reglas registradas
                 </td>
               </tr>

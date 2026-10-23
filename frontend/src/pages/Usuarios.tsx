@@ -14,6 +14,12 @@ export function Usuarios() {
   const [roleId, setRoleId] = useState("");
   const [roleName, setRoleName] = useState("");
 
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editRoleId, setEditRoleId] = useState("");
+  const [editActive, setEditActive] = useState(true);
+
   const createUser = useMutation({
     mutationFn: () => usuariosApi.create({ name, email, role_id: Number(roleId), active: true }),
     onSuccess: () => { setName(""); setEmail(""); setRoleId(""); qc.invalidateQueries({ queryKey: ["usuarios"] }); },
@@ -28,6 +34,19 @@ export function Usuarios() {
     mutationFn: () => rolesApi.create({ name: roleName }),
     onSuccess: () => { setRoleName(""); qc.invalidateQueries({ queryKey: ["usuarios"] }); },
   });
+
+  const saveEdit = useMutation({
+    mutationFn: () => usuariosApi.update(editingId!, { name: editName, email: editEmail, role_id: Number(editRoleId), active: editActive }),
+    onSuccess: () => { setEditingId(null); qc.invalidateQueries({ queryKey: ["usuarios"] }); },
+  });
+
+  const startEdit = (u: { id: number; name: string; email: string; roleId?: number; active: boolean }) => {
+    setEditingId(u.id);
+    setEditName(u.name);
+    setEditEmail(u.email);
+    setEditRoleId(u.roleId ? String(u.roleId) : "");
+    setEditActive(u.active);
+  };
 
   return (
     <div>
@@ -79,17 +98,43 @@ export function Usuarios() {
             <tbody>
               {data.users.map((u) => (
                 <tr key={u.id}>
-                  <td>{u.name}</td>
-                  <td>{u.email}</td>
-                  <td><span className="badge info">{u.role}</span></td>
-                  <td>
-                    <span className={`badge ${u.active ? "success" : "danger"}`}>
-                      {u.active ? "Sí" : "No"}
-                    </span>
-                  </td>
-                  <td>
-                    <button onClick={() => deleteUser.mutate(u.id)}>Eliminar</button>
-                  </td>
+                  {editingId === u.id ? (
+                    <>
+                      <td><input value={editName} onChange={(e) => setEditName(e.target.value)} /></td>
+                      <td><input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} /></td>
+                      <td>
+                        <select value={editRoleId} onChange={(e) => setEditRoleId(e.target.value)}>
+                          {data.roles.map((r) => (
+                            <option key={r.id} value={r.id}>{r.name}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <input type="checkbox" checked={editActive} onChange={(e) => setEditActive(e.target.checked)} />
+                      </td>
+                      <td style={{ display: "flex", gap: "var(--space-2)" }}>
+                        <button className="primary" onClick={() => saveEdit.mutate()}>Guardar</button>
+                        <button onClick={() => setEditingId(null)}>Cancelar</button>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td>{u.name}</td>
+                      <td>{u.email}</td>
+                      <td><span className="badge info">{u.role}</span></td>
+                      <td>
+                        <span className={`badge ${u.active ? "success" : "danger"}`}>
+                          {u.active ? "Sí" : "No"}
+                        </span>
+                      </td>
+                      <td style={{ display: "flex", gap: "var(--space-2)" }}>
+                        <button onClick={() => startEdit({ ...u, roleId: data.roles.find((r) => r.name === u.role)?.id })}>
+                          Editar
+                        </button>
+                        <button onClick={() => deleteUser.mutate(u.id)}>Eliminar</button>
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))}
               {data.users.length === 0 && (

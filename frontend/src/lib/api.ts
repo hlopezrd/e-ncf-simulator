@@ -109,6 +109,8 @@ export const certificadosApi = {
   list: () => apiFetch<CertificadoListResponse>("/api/certificados"),
   create: (data: { rnc: string; alias_name?: string; subject?: string; issuer?: string; serial?: string; thumbprint?: string }) =>
     apiFetch<CertificadoItem>("/api/certificados", { method: "POST", body: JSON.stringify(data) }),
+  update: (id: number, data: { alias_name?: string; subject?: string; issuer?: string }) =>
+    apiFetch<CertificadoItem>(`/api/certificados/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   remove: (id: number) => apiFetch<void>(`/api/certificados/${id}`, { method: "DELETE" }),
 };
 
@@ -208,6 +210,8 @@ export const usuariosApi = {
   list: () => apiFetch<UsuarioListResponse>("/api/usuarios"),
   create: (data: { name: string; email: string; role_id: number; active?: boolean }) =>
     apiFetch<UsuarioItem>("/api/usuarios", { method: "POST", body: JSON.stringify(data) }),
+  update: (id: number, data: { name?: string; email?: string; role_id?: number; active?: boolean }) =>
+    apiFetch<UsuarioItem>(`/api/usuarios/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   remove: (id: number) => apiFetch<void>(`/api/usuarios/${id}`, { method: "DELETE" }),
 };
 
