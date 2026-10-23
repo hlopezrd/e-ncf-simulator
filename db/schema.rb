@@ -10,12 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_170604) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_170807) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["origin"], name: "index_allowed_origins_on_origin", unique: true
+  end
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.string "actor", null: false
+    t.string "action", null: false
+    t.string "target"
+    t.text "details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_audit_logs_on_action"
+    t.index ["actor"], name: "index_audit_logs_on_actor"
+    t.index ["created_at"], name: "index_audit_logs_on_created_at"
   end
 
   create_table "auth_tokens", force: :cascade do |t|
@@ -60,6 +72,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170604) do
     t.index ["track_id"], name: "index_electronic_invoices_on_track_id", unique: true
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_roles_on_name", unique: true
+  end
+
   create_table "simulation_rules", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
@@ -70,6 +90,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170604) do
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_simulation_rules_on_active"
     t.index ["rule_type"], name: "index_simulation_rules_on_rule_type"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.integer "role_id", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["role_id"], name: "index_users_on_role_id"
   end
 
   create_table "validation_errors", force: :cascade do |t|
@@ -84,5 +115,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_170604) do
     t.index ["electronic_invoice_id"], name: "index_validation_errors_on_electronic_invoice_id"
   end
 
+  add_foreign_key "users", "roles"
   add_foreign_key "validation_errors", "electronic_invoices"
 end

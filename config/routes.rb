@@ -15,5 +15,7 @@ Rails.application.routes.draw do
     resources :certificados, only: [ :index ], controller: "api/certificados"
     resources :validaciones, only: [ :index ], controller: "api/validaciones"
     resources :reglas, only: [ :index ], controller: "api/reglas"
+    resources :usuarios, only: [ :index ], controller: "api/usuarios"
+    resources :auditoria, only: [ :index ], controller: "api/auditoria"
   end
 end

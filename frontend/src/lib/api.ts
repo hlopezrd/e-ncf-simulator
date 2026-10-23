@@ -156,6 +156,54 @@ export const reglasApi = {
   },
 };
 
+export interface UsuarioItem {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface RoleItem {
+  id: number;
+  name: string;
+  description: string | null;
+}
+
+export interface UsuarioListResponse {
+  users: UsuarioItem[];
+  roles: RoleItem[];
+  meta: { total_users: number; total_roles: number };
+}
+
+export const usuariosApi = {
+  list: () => apiFetch<UsuarioListResponse>("/api/usuarios"),
+};
+
+export interface AuditItem {
+  id: number;
+  actor: string;
+  action: string;
+  target: string | null;
+  details: string | null;
+  createdAt: string;
+}
+
+export interface AuditListResponse {
+  data: AuditItem[];
+  meta: { total: number };
+}
+
+export const auditoriaApi = {
+  list: (actor?: string, action?: string) => {
+    const q = new URLSearchParams();
+    if (actor) q.set("actor", actor);
+    if (action) q.set("action", action);
+    return apiFetch<AuditListResponse>(`/api/auditoria?${q.toString()}`);
+  },
+};
+
 export interface TrackIdQueryResponse {
   trackId: string | null;
   estado: string;
