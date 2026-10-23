@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_124809) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_154722) do
   create_table "auth_tokens", force: :cascade do |t|
-    t.string "token", null: false
     t.string "rnc", null: false
     t.datetime "expires_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "token_digest", null: false
     t.index ["rnc"], name: "index_auth_tokens_on_rnc"
-    t.index ["token"], name: "index_auth_tokens_on_token", unique: true
+    t.index ["token_digest"], name: "index_auth_tokens_on_token_digest", unique: true
   end
 
   create_table "electronic_invoices", force: :cascade do |t|
