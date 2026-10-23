@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_165924) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_170604) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -58,6 +58,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_165924) do
     t.index ["rnc_emisor", "encf"], name: "index_electronic_invoices_on_rnc_emisor_and_encf", unique: true
     t.index ["rnc_emisor"], name: "index_electronic_invoices_on_rnc_emisor"
     t.index ["track_id"], name: "index_electronic_invoices_on_track_id", unique: true
+  end
+
+  create_table "simulation_rules", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.string "rule_type", null: false
+    t.boolean "active", default: true, null: false
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_simulation_rules_on_active"
+    t.index ["rule_type"], name: "index_simulation_rules_on_rule_type"
   end
 
   create_table "validation_errors", force: :cascade do |t|

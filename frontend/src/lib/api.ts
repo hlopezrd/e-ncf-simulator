@@ -133,6 +133,29 @@ export const validacionesApi = {
   },
 };
 
+export interface ReglaItem {
+  id: number;
+  name: string;
+  description: string | null;
+  ruleType: string;
+  active: boolean;
+  value: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReglaListResponse {
+  data: ReglaItem[];
+  meta: { total: number };
+}
+
+export const reglasApi = {
+  list: (active?: boolean) => {
+    const q = active !== undefined ? `?active=${active}` : "";
+    return apiFetch<ReglaListResponse>(`/api/reglas${q}`);
+  },
+};
+
 export interface TrackIdQueryResponse {
   trackId: string | null;
   estado: string;

@@ -10,6 +10,7 @@ import { Empresas } from "./pages/Empresas";
 import { EcfList } from "./pages/EcfList";
 import { Certificados } from "./pages/Certificados";
 import { Validaciones } from "./pages/Validaciones";
+import { Reglas } from "./pages/Reglas";
 import { EcfDetail } from "./pages/EcfDetail";
 import { TrackIds } from "./pages/TrackIds";
 
@@ -35,7 +36,7 @@ function AppRoutes() {
                 <Route path="/trackids" element={<TrackIds />} />
                 <Route path="/empresas" element={<Empresas />} />
                 <Route path="/certificados" element={<Certificados />} />
-                <Route path="/reglas" element={<Placeholder title="Reglas de simulación" />} />
+                <Route path="/reglas" element={<Reglas />} />
                 <Route path="/usuarios" element={<Placeholder title="Usuarios y roles" />} />
                 <Route path="/validaciones" element={<Validaciones />} />
                 <Route path="/auditoria" element={<Placeholder title="Auditoría" />} />
