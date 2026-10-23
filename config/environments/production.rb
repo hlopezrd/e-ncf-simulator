@@ -14,7 +14,10 @@ Rails.application.configure do
 
   # Cache assets for far-future expiry since they are all digest stamped.
   config.public_file_server.enabled = true
-  config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
+  config.public_file_server.headers = {
+    "cache-control" => "public, max-age=#{1.year.to_i}",
+    "content-security-policy" => "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+  }
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
