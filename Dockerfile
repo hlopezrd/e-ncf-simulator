@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1
+ARG RUBY_VERSION=3.4
 # Stage 1: build frontend (React + Vite)
 FROM node:20-alpine AS frontend
 WORKDIR /frontend
@@ -9,7 +10,6 @@ COPY frontend/ ./
 RUN yarn build
 
 # Stage 2: Rails API + frontend
-ARG RUBY_VERSION=3.4
 FROM ruby:${RUBY_VERSION}-slim AS base
 
 WORKDIR /rails
