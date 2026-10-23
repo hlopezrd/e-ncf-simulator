@@ -72,6 +72,9 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
+    appsignal (5.0.7)
+      logger
+      rack (>= 2.0.0)
     ast (2.4.3)
     base64 (0.3.0)
     bcrypt_pbkdf (1.1.2)
@@ -351,6 +354,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  appsignal
   bootsnap
   brakeman
   bullet
