@@ -33,3 +33,6 @@
 
 # Ignore Kamal secrets
 /.kamal/secrets
+
+# Ignore simulator crypto material
+/config/certs/
