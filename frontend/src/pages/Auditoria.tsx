@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import DataTable from "datatables.net-react";
-import DT from "datatables.net-dt";
+import { DataTable } from "../components/DataTable";
 import { auditoriaApi } from "../lib/api";
 
-DataTable.use(DT);
 
 export function Auditoria() {
   const [actor, setActor] = useState("");
@@ -38,8 +36,7 @@ export function Auditoria() {
         <DataTable
           data={data.data}
           columns={columns}
-          className="display"
-          options={{ pageLength: 10, language: { emptyTable: "Sin registros de auditoría" } }}
+          pageLength={10} emptyTable="Sin registros de auditoría"
         />
       )}
     </div>

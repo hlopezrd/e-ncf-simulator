@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import DataTable from "datatables.net-react";
-import DT from "datatables.net-dt";
+import { DataTable } from "../components/DataTable";
 import { empresasApi } from "../lib/api";
 
-DataTable.use(DT);
 
 export function Empresas() {
   const { data, isLoading, error } = useQuery({
@@ -26,8 +24,7 @@ export function Empresas() {
         <DataTable
           data={data.data}
           columns={columns}
-          className="display"
-          options={{ pageLength: 10, language: { emptyTable: "Sin datos" } }}
+          pageLength={10} emptyTable="Sin datos"
         />
       )}
     </div>

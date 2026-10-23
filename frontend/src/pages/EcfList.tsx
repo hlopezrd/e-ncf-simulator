@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { DataTable } from "../components/DataTable";
 
-import DataTable from "datatables.net-react";
-import DT from "datatables.net-dt";
 import { ecfApi } from "../lib/api";
 
-DataTable.use(DT);
 
 export function EcfList() {
   const [estado, setEstado] = useState("");
@@ -68,8 +66,7 @@ export function EcfList() {
         <DataTable
           data={data.data}
           columns={columns}
-          className="display"
-          options={{ pageLength: 10, language: { emptyTable: "Sin resultados" } }}
+          pageLength={10} emptyTable="Sin resultados"
         />
       )}
     </div>

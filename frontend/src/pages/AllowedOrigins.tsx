@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import DataTable from "datatables.net-react";
-import DT from "datatables.net-dt";
 import { allowedOriginsApi } from "../lib/api";
+import { DataTable } from "../components/DataTable";
 import Swal from "sweetalert2";
 
-DataTable.use(DT);
 
 export function AllowedOrigins() {
   const qc = useQueryClient();
@@ -71,8 +69,7 @@ export function AllowedOrigins() {
           <DataTable
             data={data.data}
             columns={columns}
-            className="display"
-            options={{ pageLength: 10, language: { emptyTable: "Sin orígenes registrados" } }}
+            pageLength={10} emptyTable="Sin orígenes registrados"
           />
         </div>
       )}

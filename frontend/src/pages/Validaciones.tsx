@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import DataTable from "datatables.net-react";
-import DT from "datatables.net-dt";
+import { DataTable } from "../components/DataTable";
 import { validacionesApi } from "../lib/api";
 
-DataTable.use(DT);
 
 export function Validaciones() {
   const [sev, setSev] = useState("");
@@ -47,8 +45,7 @@ export function Validaciones() {
         <DataTable
           data={data.data}
           columns={columns}
-          className="display"
-          options={{ pageLength: 10, language: { emptyTable: "Sin validaciones registradas" } }}
+          pageLength={10} emptyTable="Sin validaciones registradas"
         />
       )}
     </div>
