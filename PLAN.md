@@ -14,7 +14,7 @@
 - [x] README con comandos y ejemplos curl
 - [x] Logging estructurado JSON + GUID de error para trazabilidad
 - [x] Kamal + Dockerfile preparados para deploy
-- [ ] Validación XSD completa (hook preparado, desactivado)
+- [x] Validación XSD completa (hook implementado, activado por defecto; schemas en lib/xsd/)
 - [ ] Firma digital real
 - [ ] Panel administrativo / integración externa
 
