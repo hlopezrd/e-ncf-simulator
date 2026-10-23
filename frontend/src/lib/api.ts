@@ -42,3 +42,45 @@ export const authApi = {
 export const healthApi = {
   check: () => apiFetch<{ status: string; service: string; timestamp: string }>("/health"),
 };
+
+export interface EcfItem {
+  trackId: string;
+  estado: string;
+  rncEmisor: string;
+  eNCF: string;
+  tipoComprobante: string | null;
+  fechaEmision: string | null;
+  fechaRecepcion: string;
+}
+
+export interface EcfListResponse {
+  data: EcfItem[];
+  meta: { total: number; page: number; per_page: number };
+}
+
+export interface EmpresaItem {
+  rnc: string;
+  totalEcf: number;
+  ultimaRecepcion: string | null;
+}
+
+export interface EmpresaListResponse {
+  data: EmpresaItem[];
+  meta: { total: number };
+}
+
+export const ecfApi = {
+  list: (params?: { page?: number; per_page?: number; estado?: string; rnc?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.page) q.set("page", String(params.page));
+    if (params?.per_page) q.set("per_page", String(params.per_page));
+    if (params?.estado) q.set("estado", params.estado);
+    if (params?.rnc) q.set("rnc", params.rnc);
+    return apiFetch<EcfListResponse>(`/api/ecf?${q.toString()}`);
+  },
+  detail: (trackId: string) => apiFetch<EcfItem & { xml: string }>(`/api/ecf/${trackId}`),
+};
+
+export const empresasApi = {
+  list: () => apiFetch<EmpresaListResponse>("/api/empresas"),
+};

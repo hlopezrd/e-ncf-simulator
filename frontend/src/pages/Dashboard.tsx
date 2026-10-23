@@ -1,17 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { healthApi } from "../lib/api";
+import { healthApi, ecfApi } from "../lib/api";
 
 export function Dashboard() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["health"],
-    queryFn: healthApi.check,
-  });
+  const health = useQuery({ queryKey: ["health"], queryFn: healthApi.check });
+  const ecf = useQuery({ queryKey: ["ecf"], queryFn: () => ecfApi.list({ per_page: 100 }) });
+
+  const items = ecf.data?.data ?? [];
+  const total = ecf.data?.meta.total ?? 0;
+  const aceptados = items.filter((e) => e.estado === "Aceptado").length;
+  const rechazados = items.filter((e) => e.estado === "Rechazado").length;
+  const condicionales = items.filter((e) => e.estado === "Aceptado Condicional").length;
 
   const metrics = [
-    { label: "Total e-CF", value: "—", color: "primary", icon: "📄" },
-    { label: "Aceptados", value: "—", color: "success", icon: "✅" },
-    { label: "Rechazados", value: "—", color: "danger", icon: "❌" },
-    { label: "Condicionales", value: "—", color: "warning", icon: "⚠️" },
+    { label: "Total e-CF", value: total, color: "primary", icon: "📄" },
+    { label: "Aceptados", value: aceptados, color: "success", icon: "✅" },
+    { label: "Rechazados", value: rechazados, color: "danger", icon: "❌" },
+    { label: "Condicionales", value: condicionales, color: "warning", icon: "⚠️" },
   ];
 
   return (
@@ -35,7 +39,7 @@ export function Dashboard() {
               <span style={{ fontSize: 20 }}>{m.icon}</span>
             </div>
             <div style={{ fontSize: 32, fontWeight: 700, color: `var(--color-${m.color})` }}>
-              {m.value}
+              {ecf.isLoading ? "…" : m.value}
             </div>
           </div>
         ))}
@@ -43,13 +47,13 @@ export function Dashboard() {
 
       <div className="card">
         <h3>Estado del sistema</h3>
-        {isLoading && <div className="skeleton" style={{ height: 20, width: 200 }} />}
-        {error && <p style={{ color: "var(--color-danger)" }}>Error al consultar salud</p>}
-        {data && (
+        {health.isLoading && <div className="skeleton" style={{ height: 20, width: 200 }} />}
+        {health.error && <p style={{ color: "var(--color-danger)" }}>Error al consultar salud</p>}
+        {health.data && (
           <p style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
-            <span className="badge success">{data.status}</span>
+            <span className="badge success">{health.data.status}</span>
             <span style={{ color: "var(--color-muted)" }}>
-              {data.service} — {data.timestamp}
+              {health.data.service} — {health.data.timestamp}
             </span>
           </p>
         )}

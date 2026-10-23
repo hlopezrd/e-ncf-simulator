@@ -6,6 +6,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
 import { Placeholder } from "./pages/Placeholder";
+import { Empresas } from "./pages/Empresas";
 
 const qc = new QueryClient();
 
@@ -26,7 +27,7 @@ function AppRoutes() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/ecf" element={<Placeholder title="e-CF" />} />
                 <Route path="/trackids" element={<Placeholder title="TrackIds" />} />
-                <Route path="/empresas" element={<Placeholder title="Empresas y RNC" />} />
+                <Route path="/empresas" element={<Empresas />} />
                 <Route path="/certificados" element={<Placeholder title="Certificados" />} />
                 <Route path="/reglas" element={<Placeholder title="Reglas de simulación" />} />
                 <Route path="/usuarios" element={<Placeholder title="Usuarios y roles" />} />
