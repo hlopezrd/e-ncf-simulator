@@ -64,6 +64,8 @@ module Api
     def user_json(u)
       {
         id: u.id,
+        rnc: u.rnc,
+        username: u.username,
         name: u.name,
         email: u.email,
         role: u.role.name,
