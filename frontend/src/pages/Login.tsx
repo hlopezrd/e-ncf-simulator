@@ -11,12 +11,6 @@ export function Login() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fillDemo = () => {
-    setRnc("101234567");
-    setUsuario("usuario-prueba");
-    setPassword("password-prueba");
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -121,18 +115,7 @@ export function Login() {
             {loading ? "Ingresando..." : "Ingresar"}
           </button>
 
-          {import.meta.env.DEV && (
-            <button type="button" onClick={fillDemo} style={{ width: "100%", fontSize: 12, marginTop: "var(--space-2)" }}>
-              Usar credenciales de prueba
-            </button>
-          )}
         </form>
-
-        {import.meta.env.DEV && (
-          <p style={{ color: "var(--color-muted)", fontSize: 11, textAlign: "center", marginTop: "var(--space-4)" }}>
-            Credenciales: RNC 101234567 / usuario-prueba / password-prueba
-          </p>
-        )}
       </div>
     </div>
   );

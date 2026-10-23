@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_182405) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_202745) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -114,9 +114,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_182405) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.string "rnc"
+    t.string "username"
+    t.string "password_digest"
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["rnc", "username"], name: "index_users_on_rnc_and_username", unique: true
     t.index ["role_id"], name: "index_users_on_role_id"
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   create_table "validation_errors", force: :cascade do |t|

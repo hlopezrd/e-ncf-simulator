@@ -1,8 +1,11 @@
 class User < ApplicationRecord
-  acts_as_paranoid
-  has_paper_trail
   belongs_to :role
+
+  has_secure_password
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
+  validates :rnc, presence: true
+  validates :username, presence: true, uniqueness: { scope: :rnc }
+  validates :password, length: { minimum: 6 }, if: -> { new_record? || password.present? }
 end

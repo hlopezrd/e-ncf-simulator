@@ -1,17 +1,12 @@
 module Auth
   class TokenService
-    TEST_CREDENTIALS = {
-      rnc: "101234567",
-      usuario: "usuario-prueba",
-      password: "password-prueba"
-    }.freeze
-
     EXPIRES_IN = 3600
 
     def self.authenticate(rnc:, usuario:, password:)
-      return nil unless rnc == TEST_CREDENTIALS[:rnc]
-      return nil unless usuario == TEST_CREDENTIALS[:usuario]
-      return nil unless password == TEST_CREDENTIALS[:password]
+      user = User.find_by(rnc: rnc, username: usuario)
+      return nil unless user
+      return nil unless user.active?
+      return nil unless user.authenticate(password)
 
       issue_token(rnc: rnc)
     end

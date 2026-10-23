@@ -114,11 +114,15 @@ bin/kamal deploy
 
 Secretos requeridos en `.kamal/secrets`: `KAMAL_REGISTRY_PASSWORD`, `RAILS_MASTER_KEY`.
 
-## Credenciales de prueba
+## Crear el primer usuario administrador
 
-- RNC: `101234567`
-- Usuario: `usuario-prueba`
-- Password: `password-prueba`
+No existen credenciales hardcodeadas. Crea el primer admin con:
+
+```bash
+rails users:create ADMIN_RNC=101234567 ADMIN_USER=admin ADMIN_PASSWORD=changeme ADMIN_EMAIL=admin@sim.local
+```
+
+Luego inicia sesión con ese usuario. Los usuarios adicionales se crean desde el portal admin.
 
 ## Entorno de producción
 
