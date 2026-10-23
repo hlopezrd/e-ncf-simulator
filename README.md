@@ -122,6 +122,10 @@ El entorno de producción del simulador es:
 
 Aunque se denomina "producción", sigue siendo un **simulador sin validez fiscal**. No se conecta a la DGII real.
 
+## Monitoreo
+
+AppSignal configurado para producción (error tracking y performance). Requiere `APPSIGNAL_PUSH_API_KEY` en `.kamal/secrets`.
+
 ## Notas
 
 - Validación XSD disponible. Schemas oficiales en `lib/xsd/`. Activada por defecto en producción (deploy.yml); en desarrollo/tests se activa con `XSD_VALIDATION_ENABLED=true`.
