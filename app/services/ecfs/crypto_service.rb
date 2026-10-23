@@ -72,6 +72,10 @@ module Ecfs
       return false unless signed_info_node && signature_value_node && x509_node
 
       cert = OpenSSL::X509::Certificate.new(Base64.decode64(x509_node.content.strip))
+      # Validate certificate validity period.
+      now = Time.now
+      return false if now < cert.not_before || now > cert.not_after
+
       signature = Base64.decode64(signature_value_node.content.strip)
       canonical_signed_info = signed_info_node.canonicalize
 
