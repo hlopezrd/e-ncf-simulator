@@ -1,0 +1,15 @@
+<ECF>
+  <Encabezado>
+    <IdDoc>
+      <TipoeCF>31</TipoeCF>
+      <eNCF>E310000000099</eNCF>
+      <FechaEmision>2026-10-23</FechaEmision>
+    </IdDoc>
+    <Emisor>
+      <RNCEmisor>101234567</RNCEmisor>
+    </Emisor>
+  </Encabezado>
+  <Totales>
+    <MontoTotal>1000.00</MontoTotal>
+  </Totales>
+</ECF>
