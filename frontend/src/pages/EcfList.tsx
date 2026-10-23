@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+
+import DataTable from "datatables.net-react";
+import DT from "datatables.net-dt";
 import { ecfApi } from "../lib/api";
+
+DataTable.use(DT);
 
 export function EcfList() {
   const [estado, setEstado] = useState("");
@@ -12,6 +16,30 @@ export function EcfList() {
     queryKey: ["ecf", estado, rnc, page],
     queryFn: () => ecfApi.list({ page, per_page: 20, estado: estado || undefined, rnc: rnc || undefined }),
   });
+
+  const columns = [
+    {
+      title: "TrackId",
+      data: "trackId",
+      render: (d: string) => `<a href="/ecf/${d}" class="dt-link">${d.slice(0, 8)}…</a>`,
+    },
+    {
+      title: "Estado",
+      data: "estado",
+      render: (d: string) => {
+        const cls = d === "Aceptado" ? "success" : d === "Rechazado" ? "danger" : d === "Aceptado Condicional" ? "warning" : "info";
+        return `<span class="badge ${cls}">${d}</span>`;
+      },
+    },
+    { title: "RNC Emisor", data: "rncEmisor" },
+    { title: "e-NCF", data: "eNCF" },
+    { title: "Tipo", data: "tipoComprobante", defaultContent: "—" },
+    {
+      title: "Fecha recepción",
+      data: "fechaRecepcion",
+      render: (d: string) => new Date(d).toLocaleString(),
+    },
+  ];
 
   return (
     <div>
@@ -37,62 +65,12 @@ export function EcfList() {
       {error && <p style={{ color: "var(--color-danger)" }}>Error al cargar e-CF</p>}
 
       {data && (
-        <>
-          <table>
-            <thead>
-              <tr>
-                <th>TrackId</th>
-                <th>Estado</th>
-                <th>RNC Emisor</th>
-                <th>e-NCF</th>
-                <th>Tipo</th>
-                <th>Fecha recepción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.data.map((e) => (
-                <tr key={e.trackId}>
-                  <td>
-                    <Link to={`/ecf/${e.trackId}`}>{e.trackId.slice(0, 8)}…</Link>
-                  </td>
-                  <td>
-                    <span className={`badge ${e.estado === "Aceptado" ? "success" : e.estado === "Rechazado" ? "danger" : e.estado === "Aceptado Condicional" ? "warning" : "info"}`}>
-                      {e.estado}
-                    </span>
-                  </td>
-                  <td>{e.rncEmisor}</td>
-                  <td>{e.eNCF}</td>
-                  <td>{e.tipoComprobante ?? "—"}</td>
-                  <td>{new Date(e.fechaRecepcion).toLocaleString()}</td>
-                </tr>
-              ))}
-              {data.data.length === 0 && (
-                <tr>
-                  <td colSpan={6} style={{ textAlign: "center", color: "var(--color-muted)" }}>
-                    Sin resultados
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "var(--space-4)" }}>
-            <span style={{ color: "var(--color-muted)", fontSize: 13 }}>
-              Total: {data.meta.total} — Página {data.meta.page}
-            </span>
-            <div style={{ display: "flex", gap: "var(--space-2)" }}>
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>
-                Anterior
-              </button>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page * data.meta.per_page >= data.meta.total}
-              >
-                Siguiente
-              </button>
-            </div>
-          </div>
-        </>
+        <DataTable
+          data={data.data}
+          columns={columns}
+          className="display"
+          options={{ pageLength: 10, language: { emptyTable: "Sin resultados" } }}
+        />
       )}
     </div>
   );

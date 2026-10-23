@@ -481,6 +481,23 @@ data-urls@^8.0.0:
     whatwg-mimetype "^5.0.0"
     whatwg-url "^17.1.2"
 
+datatables.net-dt@^3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/datatables.net-dt/-/datatables.net-dt-3.1.4.tgz#dc5bd796566938f94ac7b3c298ca0d2a42f984f3"
+  integrity sha512-HST6HmWEMr6SA6FM2SpYu2ko0In5nHjUb03Ocop2gsHLWoRP18sgVbehxUtRS3QZP4eHfU68ujs/gnzd0U2t9g==
+  dependencies:
+    datatables.net "3.1.4"
+
+datatables.net-react@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/datatables.net-react/-/datatables.net-react-2.0.0.tgz#0414148be4dea9f696d18d3171fd3b8e44c6f016"
+  integrity sha512-Q8HJ8AT/y9R70eW92VMUXI1FTc4teC09gs+AQ4mgR0JealjT8gC24TBiU2Ow6/VldEZE3Wi+al1HGXsV7R1qhg==
+
+datatables.net@3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-3.1.4.tgz#b737343bef9ec0acfd4c6a3b5774a0925f83411f"
+  integrity sha512-tnk14y/AOr0Z1d7avIUvCcOGgqZpeo7B6g6RQiycMQckEMq2FaaZTG1Q1xD6Kci5gpAvdjZInDmbscoiVSTyGw==
+
 decimal.js@^10.6.0:
   version "10.6.0"
   resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.6.0.tgz#e649a43e3ab953a72192ff5983865e509f37ed9a"

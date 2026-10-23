@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import DataTable from "datatables.net-react";
+import DT from "datatables.net-dt";
 import { auditoriaApi } from "../lib/api";
+
+DataTable.use(DT);
 
 export function Auditoria() {
   const [actor, setActor] = useState("");
@@ -9,6 +13,14 @@ export function Auditoria() {
     queryKey: ["auditoria", actor, action],
     queryFn: () => auditoriaApi.list(actor || undefined, action || undefined),
   });
+
+  const columns = [
+    { title: "Actor", data: "actor" },
+    { title: "Acción", data: "action", render: (d: string) => `<span class="badge info">${d}</span>` },
+    { title: "Objetivo", data: "target", defaultContent: "—" },
+    { title: "Detalles", data: "details", defaultContent: "—", render: (d: string) => d ? (d.length > 60 ? d.slice(0, 60) + "…" : d) : "—" },
+    { title: "Fecha", data: "createdAt", render: (d: string) => new Date(d).toLocaleString() },
+  ];
 
   return (
     <div>
@@ -23,35 +35,12 @@ export function Auditoria() {
       {error && <p style={{ color: "var(--color-danger)" }}>Error al cargar auditoría</p>}
 
       {data && (
-        <table>
-          <thead>
-            <tr>
-              <th>Actor</th>
-              <th>Acción</th>
-              <th>Objetivo</th>
-              <th>Detalles</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.data.map((a) => (
-              <tr key={a.id}>
-                <td>{a.actor}</td>
-                <td><span className="badge info">{a.action}</span></td>
-                <td>{a.target ?? "—"}</td>
-                <td style={{ fontSize: 12, color: "var(--color-muted)" }}>{a.details ?? "—"}</td>
-                <td>{new Date(a.createdAt).toLocaleString()}</td>
-              </tr>
-            ))}
-            {data.data.length === 0 && (
-              <tr>
-                <td colSpan={5} style={{ textAlign: "center", color: "var(--color-muted)" }}>
-                  Sin registros de auditoría
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <DataTable
+          data={data.data}
+          columns={columns}
+          className="display"
+          options={{ pageLength: 10, language: { emptyTable: "Sin registros de auditoría" } }}
+        />
       )}
     </div>
   );

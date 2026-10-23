@@ -1,25 +1,56 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import DataTable from "datatables.net-react";
+import DT from "datatables.net-dt";
 import { allowedOriginsApi } from "../lib/api";
 import Swal from "sweetalert2";
 
+DataTable.use(DT);
+
 export function AllowedOrigins() {
   const qc = useQueryClient();
+  const containerRef = useRef<HTMLDivElement>(null);
   const { data, isLoading, error } = useQuery({
     queryKey: ["allowed-origins"],
     queryFn: allowedOriginsApi.list,
   });
   const [origin, setOrigin] = useState("");
 
+  const deleteMut = useMutation({
+    mutationFn: (id: number) => allowedOriginsApi.remove(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["allowed-origins"] }),
+  });
+
   const createMut = useMutation({
     mutationFn: () => allowedOriginsApi.create(origin),
     onSuccess: () => { setOrigin(""); qc.invalidateQueries({ queryKey: ["allowed-origins"] }); },
   });
 
-  const deleteMut = useMutation({
-    mutationFn: (id: number) => allowedOriginsApi.remove(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["allowed-origins"] }),
-  });
+  const columns = [
+    { title: "Origen", data: "origin" },
+    { title: "Creado", data: "createdAt", render: (d: string) => new Date(d).toLocaleString() },
+    {
+      title: "Acciones",
+      data: "id",
+      orderable: false,
+      render: (id: number) => `<button class="dt-delete" data-id="${id}">Eliminar</button>`,
+    },
+  ];
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const handler = async (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest(".dt-delete") as HTMLElement | null;
+      if (!btn) return;
+      const id = Number(btn.dataset.id);
+      const res = await Swal.fire({ title: "Eliminar origen", icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
+      if (res.isConfirmed) deleteMut.mutate(id);
+    };
+    el.addEventListener("click", handler);
+    return () => el.removeEventListener("click", handler);
+  }, [deleteMut]);
 
   return (
     <div>
@@ -36,36 +67,14 @@ export function AllowedOrigins() {
       {error && <p style={{ color: "var(--color-danger)" }}>Error al cargar</p>}
 
       {data && (
-        <table>
-          <thead>
-            <tr>
-              <th>Origen</th>
-              <th>Creado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.data.map((o) => (
-              <tr key={o.id}>
-                <td>{o.origin}</td>
-                <td>{new Date(o.createdAt).toLocaleString()}</td>
-                <td>
-                  <button onClick={async () => {
-                    const r = await Swal.fire({ title: "Eliminar origen", text: o.origin, icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#dc2626" });
-                    if (r.isConfirmed) deleteMut.mutate(o.id);
-                  }}>Eliminar</button>
-                </td>
-              </tr>
-            ))}
-            {data.data.length === 0 && (
-              <tr>
-                <td colSpan={3} style={{ textAlign: "center", color: "var(--color-muted)" }}>
-                  Sin orígenes registrados
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <div ref={containerRef}>
+          <DataTable
+            data={data.data}
+            columns={columns}
+            className="display"
+            options={{ pageLength: 10, language: { emptyTable: "Sin orígenes registrados" } }}
+          />
+        </div>
       )}
     </div>
   );
