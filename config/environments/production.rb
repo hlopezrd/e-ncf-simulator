@@ -25,6 +25,19 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
+  # Content Security Policy (mitigate XSS).
+  config.content_security_policy do |policy|
+    policy.default_src :self
+    policy.script_src :self
+    policy.style_src :self, :unsafe_inline, "https://fonts.googleapis.com"
+    policy.font_src :self, "https://fonts.gstatic.com"
+    policy.img_src :self, :data
+    policy.connect_src :self
+    policy.frame_ancestors :none
+    policy.base_uri :self
+    policy.form_action :self
+  end
+
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
