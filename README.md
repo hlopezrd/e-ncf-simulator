@@ -69,6 +69,17 @@ curl -H "Authorization: Bearer $TOKEN" \
   "http://localhost:3000/api/trackids/consulta?rncemisor=101234567&encf=E310000000001"
 ```
 
+## Calidad y análisis estático
+
+```bash
+bundle exec rspec
+bundle exec rubocop
+bundle exec fasterer
+bundle exec brakeman -q
+```
+
+- Bullet habilitado en desarrollo (solo notificación, no lanza errores).
+
 ## Logging y trazabilidad
 
 - Logs estructurados en JSON a STDOUT (ideal para Kamal/Docker).
