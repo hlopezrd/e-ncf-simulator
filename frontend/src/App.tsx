@@ -17,6 +17,7 @@ const Reglas = lazy(() => import("./pages/Reglas").then((m) => ({ default: m.Reg
 const AllowedOrigins = lazy(() => import("./pages/AllowedOrigins").then((m) => ({ default: m.AllowedOrigins })));
 const Usuarios = lazy(() => import("./pages/Usuarios").then((m) => ({ default: m.Usuarios })));
 const Auditoria = lazy(() => import("./pages/Auditoria").then((m) => ({ default: m.Auditoria })));
+const Guia = lazy(() => import("./pages/Guia").then((m) => ({ default: m.Guia })));
 
 const qc = new QueryClient();
 
@@ -48,6 +49,7 @@ function AppRoutes() {
                 <Route path="/auditoria" element={<Auditoria />} />
                 <Route path="/configuracion" element={<Placeholder title="Configuración" />} />
                 <Route path="/health" element={<Placeholder title="Salud del sistema" />} />
+                <Route path="/guia" element={<Guia />} />
                 <Route path="*" element={<Placeholder title="No encontrado" />} />
               </Routes>
               </Suspense>

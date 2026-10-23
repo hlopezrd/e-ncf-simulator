@@ -15,6 +15,7 @@ const allNav = [
   { to: "/auditoria", label: "Auditoría", roles: ["admin", "operator"] },
   { to: "/configuracion", label: "Configuración", roles: ["admin"] },
   { to: "/health", label: "Salud", roles: ["admin", "operator", "viewer"] },
+  { to: "/guia", label: "Guía de envío", roles: ["admin", "operator", "viewer"] },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
