@@ -14,4 +14,4 @@ test:
 
 production:
   <<: *defaults
-  active: true
+  active: <%= ENV["APPSIGNAL_PUSH_API_KEY"].present? %>
