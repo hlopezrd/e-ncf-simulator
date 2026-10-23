@@ -19,6 +19,7 @@ module Api
       role = Role.find(params[:role_id])
       record = User.new(user_params.merge(role: role))
       if record.save
+        audit!("create_user", "User##{record.id}", { name: record.name, email: record.email, role: record.role.name }.to_json)
         render json: user_json(record), status: :created
       else
         render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
@@ -45,6 +46,7 @@ module Api
     def destroy
       return if performed?
       record = User.find(params[:id])
+      audit!("destroy_user", "User##{record.id}", { name: record.name, email: record.email }.to_json)
       record.destroy
       head :no_content
     rescue ActiveRecord::RecordNotFound

@@ -7,7 +7,7 @@ module Api
 
       scope = AuditLog.order(created_at: :desc)
       scope = scope.where(actor: params[:actor]) if params[:actor].present?
-      scope = scope.where(action: params[:action]) if params[:action].present?
+      scope = scope.where(action: params[:action_type]) if params[:action_type].present?
 
       render json: {
         data: scope.map { |a| audit_json(a) },

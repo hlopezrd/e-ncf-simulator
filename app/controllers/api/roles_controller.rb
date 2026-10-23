@@ -12,6 +12,7 @@ module Api
       return if performed?
       record = Role.new(role_params)
       if record.save
+        audit!("create_role", "Role##{record.id}", { name: record.name }.to_json)
         render json: { id: record.id, name: record.name, description: record.description }, status: :created
       else
         render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
@@ -33,6 +34,7 @@ module Api
     def destroy
       return if performed?
       record = Role.find(params[:id])
+      audit!("destroy_role", "Role##{record.id}", { name: record.name }.to_json)
       record.destroy
       head :no_content
     rescue ActiveRecord::RecordNotFound

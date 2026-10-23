@@ -12,6 +12,7 @@ module Api
       return if performed?
       record = SimulationRule.new(rule_params)
       if record.save
+        audit!("create_simulation_rule", "SimulationRule##{record.id}", { name: record.name, rule_type: record.rule_type }.to_json)
         render json: rule_json(record), status: :created
       else
         render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
@@ -22,6 +23,7 @@ module Api
       return if performed?
       record = SimulationRule.find(params[:id])
       if record.update(rule_params)
+        audit!("update_simulation_rule", "SimulationRule##{record.id}", rule_params.to_json)
         render json: rule_json(record)
       else
         render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
@@ -33,6 +35,7 @@ module Api
     def destroy
       return if performed?
       record = SimulationRule.find(params[:id])
+      audit!("destroy_simulation_rule", "SimulationRule##{record.id}", { name: record.name }.to_json)
       record.destroy
       head :no_content
     rescue ActiveRecord::RecordNotFound

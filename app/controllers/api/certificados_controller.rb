@@ -15,6 +15,7 @@ module Api
       return if performed?
       record = Certificate.new(cert_params)
       if record.save
+        audit!("create_certificate", "Certificate##{record.id}", { rnc: record.rnc, thumbprint: record.thumbprint }.to_json)
         render json: cert_json(record), status: :created
       else
         render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
@@ -36,6 +37,7 @@ module Api
     def destroy
       return if performed?
       record = Certificate.find(params[:id])
+      audit!("destroy_certificate", "Certificate##{record.id}", { rnc: record.rnc }.to_json)
       record.destroy
       head :no_content
     rescue ActiveRecord::RecordNotFound

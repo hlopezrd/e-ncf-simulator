@@ -234,7 +234,7 @@ export const auditoriaApi = {
   list: (actor?: string, action?: string) => {
     const q = new URLSearchParams();
     if (actor) q.set("actor", actor);
-    if (action) q.set("action", action);
+    if (action) q.set("action_type", action);
     return apiFetch<AuditListResponse>(`/api/auditoria?${q.toString()}`);
   },
 };

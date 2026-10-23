@@ -23,6 +23,17 @@ class ApplicationController < ActionController::API
 
   attr_reader :current_auth_token
 
+  def audit!(action, target, details = nil)
+    AuditLog.create!(
+      actor: current_auth_token&.rnc || "anonymous",
+      action: action,
+      target: target,
+      details: details
+    )
+  rescue StandardError
+    nil
+  end
+
   MAX_REQUEST_BYTES = 5.megabytes
 
   def limit_request_size

@@ -10,8 +10,10 @@ module Api
 
     def create
       return if performed?
+      Rails.logger.info("DEBUG create allowed_origin called")
       record = AllowedOrigin.new(origin: params[:origin])
       if record.save
+        audit!("create_allowed_origin", "AllowedOrigin##{record.id}", { origin: record.origin }.to_json)
         render json: { id: record.id, origin: record.origin }, status: :created
       else
         render json: { errors: record.errors.full_messages }, status: :unprocessable_entity
@@ -21,6 +23,7 @@ module Api
     def destroy
       return if performed?
       record = AllowedOrigin.find(params[:id])
+      audit!("destroy_allowed_origin", "AllowedOrigin##{record.id}", { origin: record.origin }.to_json)
       record.destroy
       head :no_content
     rescue ActiveRecord::RecordNotFound
