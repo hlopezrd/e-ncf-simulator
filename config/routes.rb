@@ -10,7 +10,9 @@ Rails.application.routes.draw do
   get "/api/trackids/consulta", to: "api/trackids#consulta"
 
   scope "/api" do
-    resources :ecf, only: [:index, :show], param: :track_id, controller: "api/ecfs"
-    resources :empresas, only: [:index], controller: "api/empresas"
+    resources :ecf, only: [ :index, :show ], param: :track_id, controller: "api/ecfs"
+    resources :empresas, only: [ :index ], controller: "api/empresas"
+    resources :certificados, only: [ :index ], controller: "api/certificados"
+    resources :validaciones, only: [ :index ], controller: "api/validaciones"
   end
 end

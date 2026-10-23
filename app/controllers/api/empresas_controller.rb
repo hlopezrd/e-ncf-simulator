@@ -13,7 +13,7 @@ module Api
         {
           rnc: r.rnc_emisor,
           totalEcf: r.total_ecf,
-          ultimaRecepcion: r.ultima_recepcion&.iso8601,
+          ultimaRecepcion: r.ultima_recepcion&.iso8601
         }
       end
 

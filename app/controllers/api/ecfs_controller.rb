@@ -45,7 +45,7 @@ module Api
         fechaEmision: record.fecha_emision&.iso8601,
         fechaRecepcion: record.fecha_recepcion.iso8601,
         errores: record.validation_errors.where(severidad: "ERROR").map(&:to_h),
-        advertencias: record.validation_errors.where(severidad: "WARNING").map(&:to_h),
+        advertencias: record.validation_errors.where(severidad: "WARNING").map(&:to_h)
       }
     end
   end

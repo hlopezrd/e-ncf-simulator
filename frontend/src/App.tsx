@@ -8,6 +8,8 @@ import { Dashboard } from "./pages/Dashboard";
 import { Placeholder } from "./pages/Placeholder";
 import { Empresas } from "./pages/Empresas";
 import { EcfList } from "./pages/EcfList";
+import { Certificados } from "./pages/Certificados";
+import { Validaciones } from "./pages/Validaciones";
 import { EcfDetail } from "./pages/EcfDetail";
 import { TrackIds } from "./pages/TrackIds";
 
@@ -32,9 +34,10 @@ function AppRoutes() {
                 <Route path="/ecf/:trackId" element={<EcfDetail />} />
                 <Route path="/trackids" element={<TrackIds />} />
                 <Route path="/empresas" element={<Empresas />} />
-                <Route path="/certificados" element={<Placeholder title="Certificados" />} />
+                <Route path="/certificados" element={<Certificados />} />
                 <Route path="/reglas" element={<Placeholder title="Reglas de simulación" />} />
                 <Route path="/usuarios" element={<Placeholder title="Usuarios y roles" />} />
+                <Route path="/validaciones" element={<Validaciones />} />
                 <Route path="/auditoria" element={<Placeholder title="Auditoría" />} />
                 <Route path="/configuracion" element={<Placeholder title="Configuración" />} />
                 <Route path="/health" element={<Placeholder title="Salud del sistema" />} />

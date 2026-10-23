@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_155446) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_165924) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -26,6 +26,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_155446) do
     t.string "token_digest", null: false
     t.index ["rnc"], name: "index_auth_tokens_on_rnc"
     t.index ["token_digest"], name: "index_auth_tokens_on_token_digest", unique: true
+  end
+
+  create_table "certificates", force: :cascade do |t|
+    t.string "rnc", null: false
+    t.string "alias_name"
+    t.string "subject"
+    t.string "issuer"
+    t.string "serial"
+    t.datetime "not_before"
+    t.datetime "not_after"
+    t.string "thumbprint"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rnc"], name: "index_certificates_on_rnc"
+    t.index ["thumbprint"], name: "index_certificates_on_thumbprint", unique: true
   end
 
   create_table "electronic_invoices", force: :cascade do |t|

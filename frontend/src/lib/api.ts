@@ -87,6 +87,52 @@ export const empresasApi = {
   list: () => apiFetch<EmpresaListResponse>("/api/empresas"),
 };
 
+export interface CertificadoItem {
+  id: number;
+  rnc: string;
+  alias: string | null;
+  subject: string | null;
+  issuer: string | null;
+  serial: string | null;
+  notBefore: string | null;
+  notAfter: string | null;
+  thumbprint: string | null;
+  createdAt: string;
+}
+
+export interface CertificadoListResponse {
+  data: CertificadoItem[];
+  meta: { total: number };
+}
+
+export const certificadosApi = {
+  list: () => apiFetch<CertificadoListResponse>("/api/certificados"),
+};
+
+export interface ValidacionItem {
+  id: number;
+  codigo: string;
+  campo: string;
+  mensaje: string;
+  severidad: string;
+  trackId: string;
+  rncEmisor: string;
+  eNCF: string;
+  createdAt: string;
+}
+
+export interface ValidacionListResponse {
+  data: ValidacionItem[];
+  meta: { total: number };
+}
+
+export const validacionesApi = {
+  list: (severidad?: string) => {
+    const q = severidad ? `?severidad=${encodeURIComponent(severidad)}` : "";
+    return apiFetch<ValidacionListResponse>(`/api/validaciones${q}`);
+  },
+};
+
 export interface TrackIdQueryResponse {
   trackId: string | null;
   estado: string;

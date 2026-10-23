@@ -8,6 +8,7 @@ const nav = [
   { to: "/trackids", label: "TrackIds" },
   { to: "/empresas", label: "Empresas" },
   { to: "/certificados", label: "Certificados" },
+  { to: "/validaciones", label: "Validaciones" },
   { to: "/reglas", label: "Reglas" },
   { to: "/usuarios", label: "Usuarios" },
   { to: "/auditoria", label: "Auditoría" },
