@@ -11,10 +11,13 @@ module Api
       )
 
       data = rows.map do |r|
+        ultima = r.ultima_recepcion
+        ultima = Time.zone.parse(ultima) if ultima.is_a?(String)
+
         {
           rnc: r.rnc_emisor,
           totalEcf: r.total_ecf,
-          ultimaRecepcion: r.ultima_recepcion&.iso8601
+          ultimaRecepcion: ultima&.iso8601
         }
       end
 
