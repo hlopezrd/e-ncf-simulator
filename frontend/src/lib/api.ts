@@ -2,6 +2,8 @@ import type { AuthResponse } from "../types/auth";
 
 const BASE = "";
 
+import { getUnauthorizedHandler } from "./authEvents";
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
@@ -13,6 +15,9 @@ export async function apiFetch<T>(
   };
 
   const res = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include" });
+  if (res.status === 401) {
+    getUnauthorizedHandler()?.();
+  }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new ApiError(res.status, body);
