@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   get "/health", to: "health#show"
 
   post "/api/auth", to: "api/auth#create"
+  delete "/api/auth", to: "api/auth#destroy"
 
   post "/api/recepcion", to: "api/recepcion#create"
 

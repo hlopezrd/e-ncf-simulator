@@ -1,15 +1,13 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "../context/AuthContext";
 import { ecfApi } from "../lib/api";
 
 export function EcfDetail() {
   const trackId = useParams().trackId ?? "";
-  const { token } = useAuth();
   const { data, isLoading, error } = useQuery({
     queryKey: ["ecf-detail", trackId],
-    queryFn: () => ecfApi.detail(trackId, token as string),
-    enabled: !!trackId && !!token,
+    queryFn: () => ecfApi.detail(trackId),
+    enabled: !!trackId,
   });
 
   if (isLoading) return <div className="skeleton" style={{ height: 200 }} />;

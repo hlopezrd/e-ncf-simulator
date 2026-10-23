@@ -56,8 +56,11 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_request!
-    header = request.headers["Authorization"]
-    token = header&.split(" ")&.last
+    token = request.cookies["ecf_token"]
+    if token.blank?
+      header = request.headers["Authorization"]
+      token = header&.split(" ")&.last
+    end
     @current_auth_token = Auth::TokenService.find(token)
     PaperTrail.request.whodunnit = @current_auth_token&.rnc || "anonymous"
     unless @current_auth_token

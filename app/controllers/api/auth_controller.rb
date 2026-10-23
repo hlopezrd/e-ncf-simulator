@@ -9,6 +9,15 @@ module Api
 
       auth_token = Auth::TokenService.authenticate(rnc: rnc, usuario: usuario, password: password)
       if auth_token
+        response.set_cookie(
+          "ecf_token",
+          value: auth_token.token,
+          httponly: true,
+          secure: Rails.env.production?,
+          same_site: :lax,
+          expires: 1.hour.from_now,
+          path: "/"
+        )
         render json: {
           token: auth_token.token,
           expiresIn: 3600,
@@ -17,6 +26,11 @@ module Api
       else
         render json: { error: "Credenciales inválidas", request_id: request.request_id }, status: :unauthorized
       end
+    end
+
+    def destroy
+      response.delete_cookie("ecf_token", path: "/")
+      render json: { message: "Sesión cerrada" }
     end
   end
 end

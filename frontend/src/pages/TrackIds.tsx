@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import { trackidsApi, type TrackIdQueryResponse } from "../lib/api";
 
 export function TrackIds() {
-  const { token } = useAuth();
   const [trackId, setTrackId] = useState("");
   const [rnc, setRnc] = useState("101234567");
   const [encf, setEncf] = useState("E310000000001");
@@ -15,7 +13,7 @@ export function TrackIds() {
     setError(null);
     setLoading(true);
     try {
-      const res = await trackidsApi.byTrackId(trackId, token!);
+      const res = await trackidsApi.byTrackId(trackId);
       setResult(res);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error");
@@ -29,7 +27,7 @@ export function TrackIds() {
     setError(null);
     setLoading(true);
     try {
-      const res = await trackidsApi.byRncEncf(rnc, encf, token!);
+      const res = await trackidsApi.byRncEncf(rnc, encf);
       setResult(res);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error");

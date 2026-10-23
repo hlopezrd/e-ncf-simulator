@@ -2,21 +2,17 @@ import type { AuthResponse } from "../types/auth";
 
 const BASE = "";
 
-import { getToken } from "./tokenStore";
-
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
-  token?: string | null
+  _token?: string | null
 ): Promise<T> {
-  const t = token ?? getToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),
   };
-  if (t) headers["Authorization"] = `Bearer ${t}`;
 
-  const res = await fetch(`${BASE}${path}`, { ...options, headers });
+  const res = await fetch(`${BASE}${path}`, { ...options, headers, credentials: "include" });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new ApiError(res.status, body);
@@ -83,7 +79,7 @@ export const ecfApi = {
     if (params?.rnc) q.set("rnc", params.rnc);
     return apiFetch<EcfListResponse>(`/api/ecf?${q.toString()}`);
   },
-  detail: (trackId: string, token: string) => apiFetch<EcfItem & { xml: string }>(`/api/ecf/${trackId}`, {}, token),
+  detail: (trackId: string) => apiFetch<EcfItem & { xml: string }>(`/api/ecf/${trackId}`),
 };
 
 export const empresasApi = {
@@ -256,12 +252,10 @@ export interface TrackIdQueryResponse {
 }
 
 export const trackidsApi = {
-  byTrackId: (trackId: string, token: string) =>
-    apiFetch<TrackIdQueryResponse>(`/api/consulta-estado/${trackId}`, {}, token),
-  byRncEncf: (rnc: string, encf: string, token: string) =>
+  byTrackId: (trackId: string) =>
+    apiFetch<TrackIdQueryResponse>(`/api/consulta-estado/${trackId}`),
+  byRncEncf: (rnc: string, encf: string) =>
     apiFetch<TrackIdQueryResponse>(
-      `/api/trackids/consulta?rncemisor=${encodeURIComponent(rnc)}&encf=${encodeURIComponent(encf)}`,
-      {},
-      token
+      `/api/trackids/consulta?rncemisor=${encodeURIComponent(rnc)}&encf=${encodeURIComponent(encf)}`
     ),
 };

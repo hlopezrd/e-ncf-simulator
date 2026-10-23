@@ -1,33 +1,30 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import type { AuthCredentials, AuthResponse } from "../types/auth";
+import type { AuthCredentials } from "../types/auth";
 import { authApi } from "../lib/api";
-import { setToken as storeToken, getToken } from "../lib/tokenStore";
 
 interface AuthContextValue {
-  token: string | null;
   isAuthenticated: boolean;
   login: (creds: AuthCredentials) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => getToken());
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = useCallback(async (creds: AuthCredentials) => {
-    const res: AuthResponse = await authApi.login(creds);
-    setToken(res.token);
-    storeToken(res.token);
+    await authApi.login(creds);
+    setIsAuthenticated(true);
   }, []);
 
-  const logout = useCallback(() => {
-    setToken(null);
-    storeToken(null);
+  const logout = useCallback(async () => {
+    await fetch("/api/auth", { method: "DELETE", credentials: "include" }).catch(() => {});
+    setIsAuthenticated(false);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated: !!token, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
