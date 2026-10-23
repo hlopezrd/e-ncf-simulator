@@ -17,11 +17,14 @@ module Auth
     end
 
     def self.issue_token(rnc:)
-      AuthToken.create!(
-        token: "sim-token-#{SecureRandom.hex(16)}",
+      plaintext = "sim-token-#{SecureRandom.hex(16)}"
+      record = AuthToken.create!(
+        token_digest: Digest::SHA256.hexdigest(plaintext),
         rnc: rnc,
         expires_at: Time.current + EXPIRES_IN.seconds
       )
+      record.token = plaintext
+      record
     end
 
     def self.valid?(token)

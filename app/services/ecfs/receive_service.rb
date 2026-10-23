@@ -2,21 +2,15 @@ module Ecfs
   class ReceiveService
     Result = Struct.new(:success?, :status_code, :payload, :errors, keyword_init: true)
 
-    def self.call(xml:, token:)
-      new(xml: xml, token: token).call
+    def self.call(xml:)
+      new(xml: xml).call
     end
 
-    def initialize(xml:, token:)
+    def initialize(xml:)
       @xml = xml
-      @token = token
     end
 
     def call
-      auth_token = Auth::TokenService.find(@token)
-      unless auth_token
-        return Result.new(success?: false, status_code: 401, payload: { error: "Token inválido o expirado" }, errors: [])
-      end
-
       validation = ValidateXmlService.call(@xml)
 
       if validation.errors.any?
