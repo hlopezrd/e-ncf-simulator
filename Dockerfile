@@ -37,4 +37,5 @@ RUN useradd rails --create-home --shell /bin/bash && \
 USER rails
 
 EXPOSE 3000
+HEALTHCHECK --interval=1s --timeout=5s --start-period=10s --retries=30 CMD curl -f http://localhost:3000/health || exit 1
 CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
