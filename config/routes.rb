@@ -29,7 +29,8 @@ Rails.application.routes.draw do
   dgii_auth_routes = lambda do |prefix|
     scope prefix do
       get "autenticacion/api/autenticacion/semilla", to: "api/dgii/autenticacion#semilla"
-      post "autenticacion/api/autenticacion/validarsemilla", to: "api/dgii/autenticacion#validar_semilla"
+    get "autenticacion/api/autenticacion/certificado", to: "api/dgii/autenticacion#certificado"
+    post "autenticacion/api/autenticacion/validarsemilla", to: "api/dgii/autenticacion#validar_semilla"
       post "recepcion/api/facturaselectronicas", to: "api/dgii/recepcion#create"
       get "consultaresultado/api/Consultas/Estado", to: "api/dgii/consultas#resultado"
       get "consultaestado/api/Consultas/Estado", to: "api/dgii/consultas#estado"

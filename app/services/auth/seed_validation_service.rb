@@ -23,19 +23,24 @@ module Auth
       return failure("semilla no encontrada o ya usada") unless seed
       return failure("semilla expirada") if seed.expirada?
 
-      signature_node = doc.xpath("//*[local-name()='Signature']").first
-      return failure("falta firma digital") unless signature_node
-
-      x509_node = signature_node.xpath(".//*[local-name()='X509Certificate']").first
-      return failure("falta certificado") unless x509_node
+      sig_nodes = doc.xpath("//*[local-name()='Signature']")
+      return failure("falta firma digital") unless sig_nodes.any?
 
       registered_cert = nil
-      begin
-        embedded = OpenSSL::X509::Certificate.new(Base64.decode64(x509_node.content.strip))
-        tp = Digest::SHA256.hexdigest(embedded.to_der)
-        registered_cert = Certificate.active.find_by(thumbprint: tp)
-      rescue StandardError
-        registered_cert = nil
+      sig_nodes.each do |sig|
+        x509_node = sig.xpath(".//*[local-name()='X509Certificate']").first
+        next unless x509_node
+        begin
+          embedded = OpenSSL::X509::Certificate.new(Base64.decode64(x509_node.content.strip))
+          tp = Digest::SHA256.hexdigest(embedded.to_der)
+          found = Certificate.active.find_by(thumbprint: tp)
+          if found
+            registered_cert = found
+            break
+          end
+        rescue StandardError
+          next
+        end
       end
 
       return failure("certificado no registrado") unless registered_cert

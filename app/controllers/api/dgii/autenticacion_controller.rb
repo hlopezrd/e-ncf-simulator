@@ -19,7 +19,13 @@ module Api
           </SemillaModel>
         XML
 
-        render plain: xml.strip, content_type: "application/xml"
+        signed = Ecfs::CryptoService.sign(xml.strip)
+        render plain: signed, content_type: "application/xml"
+      end
+
+      def certificado
+        cert = Ecfs::CryptoService.certificate
+        render plain: cert.to_pem, content_type: "application/x-pem-file"
       end
 
       def validar_semilla

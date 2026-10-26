@@ -111,11 +111,28 @@ module Ecfs
       return false if now < cert.not_before || now > cert.not_after
 
       doc = Nokogiri::XML(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
-      signature_node = doc.xpath("//*[local-name()='Signature']").first
-      return false unless signature_node
 
-      signed_info_node = signature_node.xpath("./*[local-name()='SignedInfo']").first
-      signature_value_node = signature_node.xpath("./*[local-name()='SignatureValue']").first
+      # Buscar la firma cuyo certificado coincida con el registrado
+      # (soporta documentos con múltiples firmas, p.ej. semilla firmada por DGII + contribuyente).
+      target_signature = nil
+      doc.xpath("//*[local-name()='Signature']").each do |sig|
+        x509 = sig.xpath(".//*[local-name()='X509Certificate']").first
+        next unless x509
+        begin
+          embedded = OpenSSL::X509::Certificate.new(Base64.decode64(x509.content.strip))
+          tp = Digest::SHA256.hexdigest(embedded.to_der)
+          if tp == registered_certificate.thumbprint
+            target_signature = sig
+            break
+          end
+        rescue StandardError
+          next
+        end
+      end
+      return false unless target_signature
+
+      signed_info_node = target_signature.xpath("./*[local-name()='SignedInfo']").first
+      signature_value_node = target_signature.xpath("./*[local-name()='SignatureValue']").first
       return false unless signed_info_node && signature_value_node
 
       signature = Base64.decode64(signature_value_node.content.strip)
@@ -124,8 +141,21 @@ module Ecfs
       valid_sig = cert.public_key.verify(OpenSSL::Digest::SHA256.new, signature, canonical_signed_info)
       return false unless valid_sig
 
+      # El digest se calcula sobre el documento sin la firma del contribuyente
+      # (las otras firmas, si las hay, permanecen en el digest).
       doc_copy = doc.dup
-      doc_copy.xpath("//*[local-name()='Signature']").remove
+      target_in_copy = doc_copy.xpath("//*[local-name()='Signature']").find do |s|
+        x509 = s.xpath(".//*[local-name()='X509Certificate']").first
+        next false unless x509
+        begin
+          embedded = OpenSSL::X509::Certificate.new(Base64.decode64(x509.content.strip))
+          Digest::SHA256.hexdigest(embedded.to_der) == registered_certificate.thumbprint
+        rescue StandardError
+          false
+        end
+      end
+      target_in_copy&.remove
+
       canonical_doc = doc_copy.canonicalize
       computed_digest = Base64.strict_encode64(Digest::SHA256.digest(canonical_doc))
 

@@ -26,6 +26,24 @@ RSpec.describe "DGII Autenticación", type: :request do
     expect(response.body).to include("<SemillaModel>")
     expect(response.body).to include("<valor>")
     expect(response.body).to include("<fecha>")
+    expect(response.body).to include("<Signature")
+  end
+
+  it "exposes the simulator public certificate" do
+    get "/testecf/autenticacion/api/autenticacion/certificado"
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("BEGIN CERTIFICATE")
+  end
+
+  it "the semilla signature verifies with the simulator certificate" do
+    get "/testecf/autenticacion/api/autenticacion/semilla"
+    seed = response.body
+    doc = Nokogiri::XML(seed)
+    sig = doc.xpath("//*[local-name()='Signature']").first
+    expect(sig).to be_present
+    x509 = sig.xpath(".//*[local-name()='X509Certificate']").first.content.strip
+    cert = OpenSSL::X509::Certificate.new(Base64.decode64(x509))
+    expect(cert.subject.to_s).to include("e-CF Simulator")
   end
 
   it "issues a token for a signed seed" do
@@ -58,8 +76,10 @@ RSpec.describe "DGII Autenticación", type: :request do
   it "rejects an unsigned seed" do
     get "/testecf/autenticacion/api/autenticacion/semilla"
     seed = response.body
+    # Quitar la firma del simulador para simular una semilla sin firmar.
+    unsigned = seed.sub(%r{<Signature.*?</Signature>}m, "")
 
-    post "/testecf/autenticacion/api/autenticacion/validarsemilla", params: { xml: seed }
+    post "/testecf/autenticacion/api/autenticacion/validarsemilla", params: { xml: unsigned }
     expect(response).to have_http_status(:unauthorized)
   end
 end

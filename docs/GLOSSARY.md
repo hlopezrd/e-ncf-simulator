@@ -77,6 +77,14 @@ Roles de ejemplo: **Empresa A** = emisor (vendedor, RNC `101234567`), **Empresa 
 - Si el tipo **no requiere RNC comprador** (32, 43, 46, 47): no hay aprobación comercial; para consumo de alto volumen se usa **RFCE**.
 - **Tipo 41** es el caso especial: los roles se invierten (el comprador es el emisor del comprobante).
 
+## Autenticación (semilla)
+
+- `GET /testecf/autenticacion/api/autenticacion/semilla` devuelve un XML `<SemillaModel>` **firmado por el simulador** con su certificado.
+- La empresa debe **validar esa firma** con el certificado público del simulador (`GET .../certificado`).
+- Luego firma la semilla (sin la firma del simulador) con **su** certificado y la envía a `POST .../validarsemilla`.
+- El simulador verifica la firma contra el certificado registrado para su RNC y devuelve un **JWT** válido 1 hora.
+- El token se envía en `Authorization: Bearer <token>`.
+
 ## Rangos de e-NCF
 
 ### Anatomía del e-NCF

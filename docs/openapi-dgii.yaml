@@ -15,9 +15,19 @@ paths:
       summary: Obtener semilla
       responses:
         "200":
-          description: XML con la semilla
+          description: XML con la semilla (firmado por el simulador)
           content:
             application/xml:
+              schema:
+                type: string
+  /autenticacion/api/autenticacion/certificado:
+    get:
+      summary: Certificado público del simulador (para validar la semilla)
+      responses:
+        "200":
+          description: Certificado X.509 en formato PEM
+          content:
+            application/x-pem-file:
               schema:
                 type: string
   /autenticacion/api/autenticacion/validarsemilla:
