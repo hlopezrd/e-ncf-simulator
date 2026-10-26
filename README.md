@@ -4,6 +4,7 @@ Simulador local de los servicios de recepción y consulta de Comprobantes Fiscal
 
 > **Aviso:** Este es únicamente un simulador local. No se conecta a la DGII real y sus respuestas NO tienen validez fiscal.
 
+**Glosario:** ver [`docs/GLOSSARY.md`](docs/GLOSSARY.md) para definiciones de emisor/comprador, tipos de NCF, documentos (ARECF, ACECF, ANECF, RFCE) y códigos de error.
 ## Stack
 
 - Rails 8.0 (API mode)
