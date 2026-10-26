@@ -1,4 +1,5 @@
 class NcfSequence < ApplicationRecord
+  belongs_to :company, optional: true
   acts_as_paranoid
   has_paper_trail
 

@@ -1,4 +1,5 @@
 class ElectronicInvoice < ApplicationRecord
+  belongs_to :company, optional: true
   acts_as_paranoid
   has_paper_trail
   has_many :validation_errors, dependent: :destroy

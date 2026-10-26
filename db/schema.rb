@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_26_140809) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_26_150004) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -74,6 +74,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_140809) do
     t.datetime "deleted_at"
     t.text "certificate_pem"
     t.boolean "active", default: true, null: false
+    t.integer "company_id"
+    t.index ["company_id", "active"], name: "index_certificates_on_company_id_and_active"
+    t.index ["company_id"], name: "index_certificates_on_company_id"
     t.index ["deleted_at"], name: "index_certificates_on_deleted_at"
     t.index ["rnc"], name: "index_certificates_active_rnc", unique: true, where: "active = 1 AND deleted_at IS NULL"
     t.index ["rnc"], name: "index_certificates_on_rnc"
@@ -91,6 +94,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_140809) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+  end
+
+  create_table "companies", force: :cascade do |t|
+    t.string "rnc", null: false
+    t.string "razon_social"
+    t.string "nombre_comercial"
+    t.string "email"
+    t.string "telefono"
+    t.boolean "activa", default: true, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_companies_on_deleted_at"
+    t.index ["rnc"], name: "index_companies_on_rnc", unique: true
   end
 
   create_table "electronic_invoices", force: :cascade do |t|
@@ -111,6 +128,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_140809) do
     t.string "fecha_firma"
     t.string "codigo_seguridad"
     t.boolean "secuencia_utilizada", default: true, null: false
+    t.integer "company_id"
+    t.index ["company_id", "rnc_emisor"], name: "index_electronic_invoices_on_company_id_and_rnc_emisor"
+    t.index ["company_id"], name: "index_electronic_invoices_on_company_id"
     t.index ["deleted_at"], name: "index_electronic_invoices_on_deleted_at"
     t.index ["encf"], name: "index_electronic_invoices_on_encf"
     t.index ["rnc_emisor", "encf"], name: "index_electronic_invoices_on_rnc_emisor_and_encf"
@@ -163,6 +183,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_140809) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
     t.boolean "anulada", default: false, null: false
+    t.integer "company_id"
+    t.index ["company_id", "tipo"], name: "index_ncf_sequences_on_company_id_and_tipo"
+    t.index ["company_id"], name: "index_ncf_sequences_on_company_id"
     t.index ["rnc", "tipo"], name: "index_ncf_sequences_on_rnc_and_tipo"
   end
 
@@ -210,6 +233,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_140809) do
     t.string "rnc"
     t.string "username"
     t.string "password_digest"
+    t.integer "company_id"
+    t.index ["company_id"], name: "index_users_on_company_id"
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["rnc", "username"], name: "index_users_on_rnc_and_username", unique: true
@@ -242,7 +267,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_140809) do
   end
 
   add_foreign_key "auth_tokens", "users"
+  add_foreign_key "certificates", "companies"
+  add_foreign_key "electronic_invoices", "companies"
   add_foreign_key "ncf_annulled_ranges", "ncf_annulations"
+  add_foreign_key "ncf_sequences", "companies"
+  add_foreign_key "users", "companies"
   add_foreign_key "users", "roles"
   add_foreign_key "validation_errors", "electronic_invoices"
 end

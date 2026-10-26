@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  belongs_to :company, optional: true
   belongs_to :role
   has_many :auth_tokens, dependent: :destroy
 
