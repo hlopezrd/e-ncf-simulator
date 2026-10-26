@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_210000) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_26_122444) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -32,6 +32,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_210000) do
     t.index ["actor"], name: "index_audit_logs_on_actor"
     t.index ["created_at"], name: "index_audit_logs_on_created_at"
     t.index ["deleted_at"], name: "index_audit_logs_on_deleted_at"
+  end
+
+  create_table "auth_seeds", force: :cascade do |t|
+    t.string "valor", null: false
+    t.datetime "fecha", null: false
+    t.datetime "expira", null: false
+    t.boolean "usado", default: false, null: false
+    t.string "rnc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["valor"], name: "index_auth_seeds_on_valor", unique: true
   end
 
   create_table "auth_tokens", force: :cascade do |t|

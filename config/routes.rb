@@ -23,6 +23,27 @@ Rails.application.routes.draw do
     resources :auditoria, only: [ :index ], controller: "api/auditoria"
     resources :certificados, only: [ :index, :create, :update, :destroy ], controller: "api/certificados"
   end
+
+  # DGII-compatible endpoints (Fase 1: autenticación por semilla)
+  dgii_auth_routes = lambda do |prefix|
+    scope prefix do
+      get "autenticacion/api/autenticacion/semilla", to: "api/dgii/autenticacion#semilla"
+      post "autenticacion/api/autenticacion/validarsemilla", to: "api/dgii/autenticacion#validar_semilla"
+    end
+  end
+  dgii_auth_routes.call("/testecf")
+  dgii_auth_routes.call("/certecf")
+  dgii_auth_routes.call("/ecf")
+  dgii_auth_routes.call("")
+
   # Serve the React SPA (must be last)
-  get "*path", to: "frontend#index", constraints: ->(req) { !req.path.start_with?("/api", "/health") }
+  dgii_roots = %w[/autenticacion /recepcion /consultaresultado /consultaestado /consultatrackids /aprobacioncomercial /anulacionrangos /recepcionfc /consultarfce /consultadirectorio]
+  get "*path", to: "frontend#index", constraints: ->(req) {
+    p = req.path
+    return false if p.start_with?("/api", "/health")
+    return false if p.start_with?("/testecf/", "/certecf/")
+    return false if dgii_roots.any? { |r| p == r || p.start_with?("#{r}/") }
+    return false if p.start_with?("/ecf/") && dgii_roots.any? { |r| p.start_with?("/ecf#{r}/") }
+    true
+  }
 end

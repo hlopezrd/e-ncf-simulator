@@ -39,10 +39,7 @@ module Ecfs
       end
 
       begin
-        doc = Nokogiri::XML(@xml) do |config|
-          config.strict
-          config.nonet
-        end
+        doc = Nokogiri::XML(@xml)
       rescue Nokogiri::XML::SyntaxError => e
         @errors << error("E002", "xml", "El XML está mal formado: #{e.message}", "ERROR")
         return build_result(nil, nil, nil, nil, nil, nil, false)
