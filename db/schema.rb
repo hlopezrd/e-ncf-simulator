@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_26_122854) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_26_123724) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -103,6 +103,28 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_122854) do
     t.index ["rnc_emisor", "encf"], name: "index_electronic_invoices_on_rnc_emisor_and_encf"
     t.index ["rnc_emisor"], name: "index_electronic_invoices_on_rnc_emisor"
     t.index ["track_id"], name: "index_electronic_invoices_on_track_id", unique: true
+  end
+
+  create_table "ncf_sequences", force: :cascade do |t|
+    t.string "rnc", null: false
+    t.integer "tipo", null: false
+    t.integer "desde", null: false
+    t.integer "hasta", null: false
+    t.date "fecha_vencimiento", null: false
+    t.boolean "activa", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["rnc", "tipo"], name: "index_ncf_sequences_on_rnc_and_tipo"
+  end
+
+  create_table "ncf_usages", force: :cascade do |t|
+    t.string "rnc", null: false
+    t.string "encf", null: false
+    t.string "track_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rnc", "encf"], name: "index_ncf_usages_on_rnc_and_encf"
   end
 
   create_table "roles", force: :cascade do |t|

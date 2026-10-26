@@ -22,6 +22,10 @@ RSpec.describe "ConsultaEstado", type: :request do
       c.alias_name = "simulator"
       c.active = true
     end
+    NcfSequence.find_or_create_by!(rnc: "101234567", tipo: 31, desde: 1, hasta: 999999) do |s|
+      s.fecha_vencimiento = Date.current + 365
+      s.activa = true
+    end
   end
 
   let(:token) do

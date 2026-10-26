@@ -13,6 +13,25 @@ module Ecfs
     def call
       validation = ValidateXmlService.call(@xml)
 
+      # Validacion de secuencia e-NCF autorizada (DGII).
+      ncf_errors = []
+      if ENV.fetch("NCF_SEQUENCE_VALIDATION_ENABLED") { "true" } == "true"
+        rnc = validation.rnc_emisor
+        encf = validation.encf
+        tipo = validation.tipo_comprobante
+        if rnc.present? && encf.present? && encf.to_s.start_with?("E") && encf.to_s.length >= 3
+          encf_tipo = encf.to_s[1, 2]
+          if tipo.present? && encf_tipo != tipo.to_s.rjust(2, "0")
+            ncf_errors << { codigo: "E021", campo: "eNCF", mensaje: "El tipo del e-NCF no corresponde al tipo de comprobante", severidad: "ERROR" }
+          end
+          seq_num = encf.to_s[3..].to_i
+          seq = NcfSequence.activas.find { |s| s.rnc == rnc && s.tipo == encf_tipo.to_i && s.vigente? && s.cubre?(seq_num) }
+          unless seq
+            ncf_errors << { codigo: "E020", campo: "eNCF", mensaje: "El e-NCF no pertenece a una secuencia autorizada para el RNC", severidad: "ERROR" }
+          end
+        end
+      end
+
       rnc_emisor = validation.rnc_emisor
       encf = validation.encf
       tipo = validation.tipo_comprobante
@@ -32,7 +51,9 @@ module Ecfs
       track_id = SecureRandom.uuid
       fecha_recepcion = Time.current
 
-      estado = if validation.errors.any? || duplicado
+      has_errors = validation.errors.any? || ncf_errors.any? || duplicado
+
+      estado = if has_errors
                  "Rechazado"
       elsif validation.warnings.any?
                  "Aceptado Condicional"
@@ -40,7 +61,7 @@ module Ecfs
                  "Aceptado"
       end
 
-      secuencia_utilizada = !(validation.errors.any? || duplicado)
+      secuencia_utilizada = !has_errors
 
       invoice = ElectronicInvoice.create!(
         track_id: track_id,
@@ -61,6 +82,7 @@ module Ecfs
 
       # Store validation errors as messages.
       all_errors = validation.errors.dup
+      all_errors.concat(ncf_errors)
       if duplicado
         all_errors << { codigo: "E010", campo: "eNCF", mensaje: "El e-CF ya fue recibido (duplicado)", severidad: "ERROR" }
       end
@@ -80,6 +102,12 @@ module Ecfs
           mensaje: w[:mensaje],
           severidad: w[:severidad]
         )
+      end
+
+      unless has_errors
+        if rnc_emisor.present? && encf.present?
+          NcfUsage.create!(rnc: rnc_emisor, encf: encf, track_id: track_id)
+        end
       end
 
       mensajes = all_errors.map { |e| { valor: e[:mensaje], codigo: e[:codigo].to_s.delete("E") } }

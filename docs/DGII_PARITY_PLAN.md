@@ -1,6 +1,6 @@
 # Plan: Clonar comportamiento de DGII (e-CF)
 
-**Estado general:** En progreso — Fases 1, 2 y 3 completadas; Fase 4 pendiente.
+**Estado general:** En progreso — Fases 1, 2, 3 y 4 completadas.
 
 **Última actualización:** 2026-10-26
 
@@ -72,12 +72,14 @@ El simulador debe ser un **reemplazo funcional de la API DGII**: mismos endpoint
 - [x] `GET /testecf/consultatrackids/api/TrackIds/Consulta?rncEmisor=&encf=`.
 - [x] Tests por cada endpoint (4 specs).
 
-## Fase 4 — Secuencias e-NCF
+## Fase 4 — Secuencias e-NCF ✅ COMPLETADA
 
-- [ ] Modelo `NcfSequence` (rnc, tipo, desde, hasta, actual, vencimiento, activa, usada).
-- [ ] Validar que el e-NCF pertenezca a un rango autorizado y no usado.
-- [ ] Regla de `secuenciaUtilizada` (rechazos que no consumen secuencia).
-- [ ] Rake task para registrar rangos.
+- [x] Modelo `NcfSequence` (rnc, tipo, desde, hasta, vencimiento, activa).
+- [x] Modelo `NcfUsage` para rastrear consumo.
+- [x] Validar que el e-NCF pertenezca a un rango autorizado y vigente.
+- [x] Regla de `secuenciaUtilizada` (rechazos que no consumen secuencia).
+- [x] Rake task `ncf_sequences:register`.
+- [x] Nuevos códigos de error `E020` (e-NCF no autorizado) y `E021` (tipo no coincide).
 
 ## Fase 5 — Documentos adicionales
 
