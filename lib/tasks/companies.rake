@@ -3,7 +3,7 @@ namespace :companies do
   task migrate_from_rncs: :environment do
     dry_run = ENV["DRY_RUN"] == "true"
     rncs = Set.new
-    [Certificate, NcfSequence, User, ElectronicInvoice].each do |klass|
+    [ Certificate, NcfSequence, User, ElectronicInvoice ].each do |klass|
       col = klass.column_names.include?("rnc_emisor") ? :rnc_emisor : :rnc
       klass.where.not(col => nil).pluck(col).each { |r| rncs << r }
     end
