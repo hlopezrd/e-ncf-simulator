@@ -11,7 +11,7 @@ Glosario de términos, actores y tipos de comprobante usados por el simulador. S
 | **Emisor** | El **vendedor/proveedor**: el RNC que **emite** la factura y es dueño de la secuencia de e-NCF | `rncEmisor` | e-CF, ANECF, RFCE |
 | **Comprador / Receptor** | El **cliente**: el RNC **a quien se factura** (el "facturar a") | `rncComprador` | ARECF, ACECF |
 | **Contribuyente** | Cualquier RNC registrado ante la DGII | — | — |
-| **Consumidor Final** | Comprador sin RNC (factura de consumo, tipo 32) | — | No aplica |
+| **Consumidor Final** | Comprador **sin RNC** en una factura de consumo (tipo 32). El e-CF **sí se emite** y se reporta a la DGII; lo que no aplica es ACECF/ARECF. | — | No aplica |
 
 ## Documentos que acompañan al e-CF
 
