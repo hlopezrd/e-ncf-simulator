@@ -136,6 +136,20 @@ El entorno de producción del simulador es:
 
 Aunque se denomina "producción", sigue siendo un **simulador sin validez fiscal**. No se conecta a la DGII real.
 
+## Certificados en producción (importante)
+
+El directorio `config/certs/` está en `.gitignore` y **no se incluye en la imagen Docker**. `Ecfs::CryptoService` genera un certificado self-signed automáticamente si no existe. Por eso, tras un deploy limpio el certificado del simulador cambia y su thumbprint ya no coincide con los registrados en la BD.
+
+**Acción obligatoria tras un deploy limpio o regeneración de certificado:**
+
+```bash
+bin/kamal app exec --reuse "bin/rails certificates:register RNC=<RNC> FILE=config/certs/simulator.crt ALIAS=simulator"
+```
+
+Además, registra los certificados de las empresas que vayan a probar recepción. Sin un certificado registrado para el RNC emisor, la recepción responderá `E016`.
+
+Secretos requeridos en `.kamal/secrets`: `KAMAL_REGISTRY_PASSWORD`, `RAILS_MASTER_KEY`, `APPSIGNAL_PUSH_API_KEY`, `JWT_SECRET`.
+
 ## Monitoreo
 
 AppSignal configurado para producción (error tracking y performance). Requiere `APPSIGNAL_PUSH_API_KEY` en `.kamal/secrets`.
