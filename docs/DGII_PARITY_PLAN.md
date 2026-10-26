@@ -1,6 +1,6 @@
 # Plan: Clonar comportamiento de DGII (e-CF)
 
-**Estado general:** En progreso — Fases 1 y 2 completadas; Fase 3 pendiente.
+**Estado general:** En progreso — Fases 1, 2 y 3 completadas; Fase 4 pendiente.
 
 **Última actualización:** 2026-10-26
 
@@ -65,12 +65,12 @@ El simulador debe ser un **reemplazo funcional de la API DGII**: mismos endpoint
 - [x] Delegación: usuario autenticado debe corresponder al RNC emisor (E019).
 - [ ] Portal: mostrar nuevos campos. (pendiente)
 
-## Fase 3 — Consultas
+## Fase 3 — Consultas ✅ COMPLETADA
 
-- [ ] `GET /testecf/consultaresultado/api/Consultas/Estado?trackId=`.
-- [ ] `GET /testecf/consultaestado/api/Consultas/Estado?rncEmisor=&ncfElectronico=&rncComprador=&codigoSeguridad=`.
-- [ ] `GET /testecf/consultatrackids/api/TrackIds/Consulta?rncEmisor=&encf=`.
-- [ ] Tests por cada endpoint.
+- [x] `GET /testecf/consultaresultado/api/Consultas/Estado?trackId=`.
+- [x] `GET /testecf/consultaestado/api/Consultas/Estado?rncEmisor=&ncfElectronico=&rncComprador=&codigoSeguridad=`.
+- [x] `GET /testecf/consultatrackids/api/TrackIds/Consulta?rncEmisor=&encf=`.
+- [x] Tests por cada endpoint (4 specs).
 
 ## Fase 4 — Secuencias e-NCF
 

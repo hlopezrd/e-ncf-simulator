@@ -30,6 +30,9 @@ Rails.application.routes.draw do
       get "autenticacion/api/autenticacion/semilla", to: "api/dgii/autenticacion#semilla"
       post "autenticacion/api/autenticacion/validarsemilla", to: "api/dgii/autenticacion#validar_semilla"
       post "recepcion/api/facturaselectronicas", to: "api/dgii/recepcion#create"
+      get "consultaresultado/api/Consultas/Estado", to: "api/dgii/consultas#resultado"
+      get "consultaestado/api/Consultas/Estado", to: "api/dgii/consultas#estado"
+      get "consultatrackids/api/TrackIds/Consulta", to: "api/dgii/consultas#track_ids"
     end
   end
   dgii_auth_routes.call("/testecf")
