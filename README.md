@@ -139,7 +139,7 @@ Aunque se denomina "producción", sigue siendo un **simulador sin validez fiscal
 
 ## Certificados en producción (importante)
 
-El directorio `config/certs/` está en `.gitignore` y **no se incluye en la imagen Docker**. `Ecfs::CryptoService` genera un certificado self-signed automáticamente si no existe. Por eso, tras un deploy limpio el certificado del simulador cambia y su thumbprint ya no coincide con los registrados en la BD.
+El directorio `config/certs/` está en `.gitignore` y **no se incluye en la imagen Docker**. `Ecfs::CryptoService` genera un certificado self-signed automáticamente si no existe. Por eso, tras un deploy limpio el certificado del simulador cambia y su thumbprint ya no coincide con los registrados en la BD. Para evitarlo, el directorio `config/certs/` se monta como volumen persistente (`e_cf_simulator_certs`).
 
 **Acción obligatoria tras un deploy limpio o regeneración de certificado:**
 

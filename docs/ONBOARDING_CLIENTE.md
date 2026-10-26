@@ -50,7 +50,7 @@ El simulador verifica la firma de cada e-CF contra el certificado registrado par
 ### 2.1 Si eres administrador del simulador (acceso al servidor)
 
 ```bash
-bin/rails certificates:register RNC=<tu RNC> FILE=config/certs/tu_empresa.crt ALIAS=tu_empresa
+bin/rails certificates:register RNC=<tu RNC> FILE=storage/certs/tu_empresa.crt ALIAS=tu_empresa
 ```
 
 Salida esperada:
