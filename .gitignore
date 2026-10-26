@@ -36,3 +36,6 @@
 
 # Ignore simulator crypto material
 /config/certs/
+
+# graphify knowledge graph output
+/graphify-out/
