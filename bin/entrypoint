@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+# Ensure persisted volume directories are writable by the rails user.
+mkdir -p /rails/config/certs
+chown -R rails:rails /rails/config/certs
+chown -R rails:rails /rails/storage 2>/dev/null || true
+
+# Drop privileges and run the main command as the rails user.
+exec su -s /bin/sh rails -c 'exec "$0" "$@"' -- "$@"

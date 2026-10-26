@@ -46,7 +46,7 @@ COPY --from=frontend /frontend/dist /rails/public
 
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails /rails
-USER rails
 
-EXPOSE 3000
+# Entrypoint fixes ownership of persisted volumes (e.g. config/certs) before dropping privileges.
+ENTRYPOINT ["/rails/bin/entrypoint"]
 CMD ["sh", "-c", "bin/rails db:prepare && bin/rails server -b 0.0.0.0"]
