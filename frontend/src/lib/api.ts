@@ -80,14 +80,32 @@ export interface EcfListResponse {
 }
 
 export interface EmpresaItem {
+  id: number;
   rnc: string;
+  razonSocial: string | null;
+  nombreComercial: string | null;
+  email: string | null;
+  telefono: string | null;
+  activa: boolean;
   totalEcf: number;
   ultimaRecepcion: string | null;
+  certificadoVigente: boolean | null;
+  rangosActivos: number;
 }
 
 export interface EmpresaListResponse {
   data: EmpresaItem[];
   meta: { total: number };
+}
+
+export interface EmpresaOnboarding {
+  companyId: number;
+  rnc: string;
+  certificadoRegistrado: boolean;
+  certificadoVigente: boolean | null;
+  thumbprint: string | null;
+  rangosActivos: number;
+  totalEcf: number;
 }
 
 export const ecfApi = {
@@ -104,6 +122,21 @@ export const ecfApi = {
 
 export const empresasApi = {
   list: () => apiFetch<EmpresaListResponse>("/api/empresas"),
+  get: (id: number) => apiFetch<{ data: EmpresaItem }>(`/api/empresas/${id}`),
+  create: (payload: { rnc: string; razon_social?: string; nombre_comercial?: string; email?: string; telefono?: string }) =>
+    apiFetch<{ data: EmpresaItem }>("/api/empresas", { method: "POST", body: JSON.stringify(payload) }),
+  update: (id: number, payload: Partial<{ rnc: string; razon_social: string; nombre_comercial: string; email: string; telefono: string; activa: boolean }>) =>
+    apiFetch<{ data: EmpresaItem }>(`/api/empresas/${id}`, { method: "PATCH", body: JSON.stringify(payload) }),
+  remove: (id: number) => apiFetch<{ message: string }>(`/api/empresas/${id}`, { method: "DELETE" }),
+  uploadCertificado: (id: number, file: File, aliasName?: string) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    if (aliasName) fd.append("alias", aliasName);
+    return apiFetch<{ data: { id: number; thumbprint: string; vigente: boolean } }>(`/api/empresas/${id}/certificados`, { method: "POST", body: fd });
+  },
+  registerRango: (id: number, payload: { tipo: number; desde: number; hasta: number; vencimiento: string }) =>
+    apiFetch<{ data: { id: number; rnc: string; tipo: number; desde: number; hasta: number } }>(`/api/empresas/${id}/ncf_sequences`, { method: "POST", body: JSON.stringify(payload) }),
+  onboarding: (id: number) => apiFetch<{ data: EmpresaOnboarding }>(`/api/empresas/${id}/estado_onboarding`),
 };
 
 export interface CertificadoItem {
