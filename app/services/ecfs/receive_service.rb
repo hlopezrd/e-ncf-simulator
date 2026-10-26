@@ -25,7 +25,8 @@ module Ecfs
             ncf_errors << { codigo: "E021", campo: "eNCF", mensaje: "El tipo del e-NCF no corresponde al tipo de comprobante", severidad: "ERROR" }
           end
           seq_num = encf.to_s[3..].to_i
-          seq = NcfSequence.activas.find { |s| s.rnc == rnc && s.tipo == encf_tipo.to_i && s.vigente? && s.cubre?(seq_num) }
+          company = rnc.present? ? Company.find_by(rnc: rnc) : nil
+          seq = NcfSequence.activas.find { |s| (company.present? ? s.company_id == company.id : s.rnc == rnc) && s.tipo == encf_tipo.to_i && s.vigente? && s.cubre?(seq_num) }
           unless seq
             ncf_errors << { codigo: "E020", campo: "eNCF", mensaje: "El e-NCF no pertenece a una secuencia autorizada para el RNC", severidad: "ERROR" }
           end
@@ -92,8 +93,10 @@ module Ecfs
 
       secuencia_utilizada = !has_errors
 
+      company = rnc_emisor.present? ? Company.find_by(rnc: rnc_emisor) : nil
       invoice = ElectronicInvoice.create!(
         track_id: track_id,
+        company: company,
         rnc_emisor: (rnc_emisor.presence || "000000000"),
         encf: (encf.presence || "E000000000000"),
         tipo_comprobante: tipo,

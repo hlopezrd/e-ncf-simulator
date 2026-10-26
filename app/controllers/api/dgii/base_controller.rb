@@ -7,7 +7,7 @@ module Api
 
       private
 
-      attr_reader :current_rnc
+      attr_reader :current_rnc, :current_company
 
       def authenticate_dgii!
         header = request.headers["Authorization"]
@@ -24,6 +24,7 @@ module Api
             verify_aud: true
           )
           @current_rnc = payload.first["name"]
+          @current_company = Company.find_by(rnc: @current_rnc)
           PaperTrail.request.whodunnit = @current_rnc
         rescue JWT::DecodeError, JWT::ExpiredSignature, JWT::InvalidIssuerError, JWT::InvalidAudError, JWT::VerificationError
           render json: { error: "Token inválido o expirado" }, status: :unauthorized
