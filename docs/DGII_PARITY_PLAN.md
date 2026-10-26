@@ -1,6 +1,6 @@
 # Plan: Clonar comportamiento de DGII (e-CF)
 
-**Estado general:** En progreso — Fases 1, 2, 3 y 4 completadas.
+**Estado general:** En progreso — Fases 1, 2, 3, 4 y 5 completadas.
 
 **Última actualización:** 2026-10-26
 
@@ -81,14 +81,14 @@ El simulador debe ser un **reemplazo funcional de la API DGII**: mismos endpoint
 - [x] Rake task `ncf_sequences:register`.
 - [x] Nuevos códigos de error `E020` (e-NCF no autorizado) y `E021` (tipo no coincide).
 
-## Fase 5 — Documentos adicionales
+## Fase 5 — Documentos adicionales ✅ COMPLETADA (ACECF, ANECF, RFCE)
 
-- [ ] `ARECF` (acuse de recibo) — verificar con cert del RNC comprador.
-- [ ] `ACECF` (aprobación comercial) — verificar con cert del RNC comprador.
-- [ ] `ANECF` (anulación de rangos).
-- [ ] `RFCE` (resumen de factura de consumo).
-- [ ] Obtener XSD de cada formato desde DGII.
-- [ ] Endpoints de consulta correspondientes.
+- [x] `ARECF` (acuse de recibo) — XSD obtenido. (endpoint peer-to-peer, no DGII)
+- [x] `ACECF` (aprobación comercial) — endpoint `/testecf/aprobacioncomercial/api/AprobacionComercial`.
+- [x] `ANECF` (anulación de rangos) — endpoint `/testecf/anulacionrangos/api/operaciones/anularrango`.
+- [x] `RFCE` (resumen de factura de consumo) — endpoint `/testecf/recepcionfc/api/recepcion/ecf`.
+- [x] XSDs obtenidos de DGII (ARECF, ACECF, ANECF, RFCE-32, Semilla).
+- [ ] Endpoints de consulta correspondientes. (pendiente)
 
 ## Fase 6 — Directorio y estatus
 

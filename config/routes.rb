@@ -33,6 +33,9 @@ Rails.application.routes.draw do
       get "consultaresultado/api/Consultas/Estado", to: "api/dgii/consultas#resultado"
       get "consultaestado/api/Consultas/Estado", to: "api/dgii/consultas#estado"
       get "consultatrackids/api/TrackIds/Consulta", to: "api/dgii/consultas#track_ids"
+      post "aprobacioncomercial/api/AprobacionComercial", to: "api/dgii/aprobacion_comercial#create"
+      post "anulacionrangos/api/operaciones/anularrango", to: "api/dgii/anulacion#create"
+      post "recepcionfc/api/recepcion/ecf", to: "api/dgii/resumen#create"
     end
   end
   dgii_auth_routes.call("/testecf")

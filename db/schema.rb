@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_26_123724) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_26_124104) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -80,6 +80,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_123724) do
     t.index ["thumbprint"], name: "index_certificates_on_thumbprint", unique: true
   end
 
+  create_table "commercial_approvals", force: :cascade do |t|
+    t.string "rnc_emisor"
+    t.string "rnc_comprador"
+    t.string "encf"
+    t.integer "estado"
+    t.string "motivo_rechazo"
+    t.datetime "fecha_hora_aprobacion"
+    t.text "xml_content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+  end
+
   create_table "electronic_invoices", force: :cascade do |t|
     t.string "track_id", null: false
     t.string "rnc_emisor", null: false
@@ -103,6 +116,28 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_123724) do
     t.index ["rnc_emisor", "encf"], name: "index_electronic_invoices_on_rnc_emisor_and_encf"
     t.index ["rnc_emisor"], name: "index_electronic_invoices_on_rnc_emisor"
     t.index ["track_id"], name: "index_electronic_invoices_on_track_id", unique: true
+  end
+
+  create_table "invoice_summaries", force: :cascade do |t|
+    t.string "rnc_emisor"
+    t.string "encf"
+    t.integer "codigo"
+    t.string "estado"
+    t.boolean "secuencia_utilizada"
+    t.text "xml_content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+  end
+
+  create_table "ncf_annulations", force: :cascade do |t|
+    t.string "rnc_emisor"
+    t.integer "cantidad_anulados"
+    t.datetime "fecha_hora_anulacion"
+    t.text "xml_content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
   end
 
   create_table "ncf_sequences", force: :cascade do |t|
