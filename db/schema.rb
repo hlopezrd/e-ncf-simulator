@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_26_122444) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_26_122854) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -92,9 +92,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_122444) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.string "rnc_comprador"
+    t.decimal "monto_total", precision: 18, scale: 2
+    t.decimal "total_itbis", precision: 18, scale: 2
+    t.string "fecha_firma"
+    t.string "codigo_seguridad"
+    t.boolean "secuencia_utilizada", default: true, null: false
     t.index ["deleted_at"], name: "index_electronic_invoices_on_deleted_at"
     t.index ["encf"], name: "index_electronic_invoices_on_encf"
-    t.index ["rnc_emisor", "encf"], name: "index_electronic_invoices_on_rnc_emisor_and_encf", unique: true
+    t.index ["rnc_emisor", "encf"], name: "index_electronic_invoices_on_rnc_emisor_and_encf"
     t.index ["rnc_emisor"], name: "index_electronic_invoices_on_rnc_emisor"
     t.index ["track_id"], name: "index_electronic_invoices_on_track_id", unique: true
   end

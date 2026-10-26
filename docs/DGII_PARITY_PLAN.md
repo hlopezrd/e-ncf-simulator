@@ -1,6 +1,6 @@
 # Plan: Clonar comportamiento de DGII (e-CF)
 
-**Estado general:** En progreso — Fase 1 completada; Fase 2 pendiente.
+**Estado general:** En progreso — Fases 1 y 2 completadas; Fase 3 pendiente.
 
 **Última actualización:** 2026-10-26
 
@@ -55,14 +55,15 @@ El simulador debe ser un **reemplazo funcional de la API DGII**: mismos endpoint
 - [x] Middleware JWT para rutas DGII (BaseController).
 - [x] Tests de integración: semilla → firmar → token (4 specs).
 
-## Fase 2 — Recepción e-CF con contrato DGII
+## Fase 2 — Recepción e-CF con contrato DGII ✅ COMPLETADA
 
-- [ ] `POST /testecf/recepcion/api/facturaselectronicas` (multipart `xml`).
-- [ ] Validaciones: XSD, firma vs certificado registrado, vigencia, RNC válido, e-NCF autorizado, duplicado.
-- [ ] Siempre responder `trackId`, incluso si rechazado.
-- [ ] Guardar `codigoSeguridad` (primeros 6 del hash del SignatureValue), `secuenciaUtilizada`, montos, fechas.
-- [ ] Formato de errores: `mensajes: [{ valor, codigo }]`.
-- [ ] Portal: mostrar nuevos campos.
+- [x] `POST /testecf/recepcion/api/facturaselectronicas` (multipart `xml`).
+- [x] Validaciones: XSD, firma vs certificado registrado, vigencia, RNC válido, e-NCF autorizado, duplicado.
+- [x] Siempre responder `trackId`, incluso si rechazado.
+- [x] Guardar `codigoSeguridad`, `secuenciaUtilizada`, montos, fechas.
+- [x] Formato de errores: `mensajes: [{ valor, codigo }]`.
+- [x] Delegación: usuario autenticado debe corresponder al RNC emisor (E019).
+- [ ] Portal: mostrar nuevos campos. (pendiente)
 
 ## Fase 3 — Consultas
 

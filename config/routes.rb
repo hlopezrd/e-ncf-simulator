@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     scope prefix do
       get "autenticacion/api/autenticacion/semilla", to: "api/dgii/autenticacion#semilla"
       post "autenticacion/api/autenticacion/validarsemilla", to: "api/dgii/autenticacion#validar_semilla"
+      post "recepcion/api/facturaselectronicas", to: "api/dgii/recepcion#create"
     end
   end
   dgii_auth_routes.call("/testecf")

@@ -10,7 +10,8 @@ class ElectronicInvoice < ApplicationRecord
   validates :encf, presence: true
   validates :estado, presence: true, inclusion: { in: ESTADOS }
   validates :fecha_recepcion, presence: true
-  validates :encf, uniqueness: { scope: :rnc_emisor, message: "ya existe para el RNC emisor" }
+  # Unicidad de (rnc, encf) NO se valida a nivel de modelo: DGII permite
+  # multiples TrackIds para el mismo e-NCF (intentos duplicados se rechazan).
 
   def aceptado?
     estado == "Aceptado"
