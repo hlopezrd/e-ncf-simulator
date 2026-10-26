@@ -72,7 +72,12 @@ module Api
         hasta: s.hasta,
         fechaVencimiento: s.fecha_vencimiento&.iso8601,
         activa: s.activa,
+        anulada: s.anulada,
         vigente: s.vigente?,
+        estado: s.estado,
+        consumidos: s.consumidos_count,
+        disponibles: s.disponibles_count,
+        anulados: s.anulados_count,
         createdAt: s.created_at.iso8601,
         deletedAt: s.deleted_at&.iso8601
       }

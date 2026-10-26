@@ -29,6 +29,34 @@ module Ecfs
           unless seq
             ncf_errors << { codigo: "E020", campo: "eNCF", mensaje: "El e-NCF no pertenece a una secuencia autorizada para el RNC", severidad: "ERROR" }
           end
+
+          # Verificar que el e-NCF no haya sido anulado.
+          if NcfAnnulledRange.exists?(rnc: rnc, tipo: encf_tipo.to_i) && NcfAnnulledRange.where(rnc: rnc, tipo: encf_tipo.to_i).any? { |a| a.covers?(seq_num) }
+            ncf_errors << { codigo: "E024", campo: "eNCF", mensaje: "El e-NCF fue anulado", severidad: "ERROR" }
+          end
+
+          # Verificar secuencialidad (sin saltos).
+          unless ncf_errors.any? { |e| e[:codigo] == "E020" }
+            accepted_seqs = NcfUsage.where(rnc: rnc).filter_map do |u|
+              next unless u.encf.to_s.start_with?("E") && u.encf.to_s.length >= 3
+              next unless u.encf.to_s[1, 2] == encf_tipo
+              u.encf.to_s[3..].to_i
+            end
+            max_accepted = accepted_seqs.max || (seq.desde - 1)
+            expected = max_accepted + 1
+            # Saltar rangos anulados.
+            loop do
+              ann = NcfAnnulledRange.where(rnc: rnc, tipo: encf_tipo.to_i).find { |a| a.covers?(expected) }
+              break unless ann
+              expected = ann.hasta + 1
+            end
+            if seq_num > expected
+              ncf_errors << { codigo: "E023", campo: "eNCF", mensaje: "El e-NCF no sigue la secuencia (no se permiten saltos)", severidad: "ERROR" }
+            end
+            if expected > seq.hasta
+              ncf_errors << { codigo: "E025", campo: "eNCF", mensaje: "El rango de e-NCF está agotado", severidad: "ERROR" }
+            end
+          end
         end
       end
 
@@ -43,8 +71,9 @@ module Ecfs
       codigo_seguridad = extract_codigo_seguridad(@xml)
 
       # Duplicate check (informational; DGII may still assign a trackId).
+      # Solo se considera duplicado si ya fue aceptado (un rechazado puede reenviarse).
       duplicado = false
-      if rnc_emisor.present? && encf.present? && ElectronicInvoice.exists?(rnc_emisor: rnc_emisor, encf: encf)
+      if rnc_emisor.present? && encf.present? && ElectronicInvoice.exists?(rnc_emisor: rnc_emisor, encf: encf, estado: [ "Aceptado", "Aceptado Condicional" ])
         duplicado = true
       end
 

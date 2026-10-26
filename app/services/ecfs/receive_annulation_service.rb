@@ -18,8 +18,6 @@ module Ecfs
 
       doc = Nokogiri::XML(@xml)
       rnc_emisor = text_of(doc, "RncEmisor")
-      cantidad = text_of(doc, "CantidadeNCFAnulados")
-      fecha_hora = text_of(doc, "FechaHoraAnulacioneNCF")
 
       registered_cert = nil
       if rnc_emisor.present?
@@ -50,13 +48,57 @@ module Ecfs
         end
       end
 
+      # Parsear detalle de anulación.
+      parsed = parse_detail(doc)
+
+      if rnc_emisor.present? && errors.empty?
+        # Validar que los rangos pertenezcan a secuencias autorizadas del RNC
+        # y que no incluyan e-NCF ya consumidos.
+        parsed.each do |line|
+          seqs = line[:rangos]
+          seqs.each do |r|
+            desde = r[:desde].to_s[3..].to_i
+            hasta = r[:hasta].to_s[3..].to_i
+            tipo = line[:tipo].to_i
+            # rango autorizado?
+            authorized = NcfSequence.where(rnc: rnc_emisor, tipo: tipo).any? { |s| s.cubre?(desde) && s.cubre?(hasta) }
+            unless authorized
+              errors << { codigo: "E020", campo: "rango", mensaje: "El rango #{r[:desde]}..#{r[:hasta]} no pertenece a una secuencia autorizada", severidad: "ERROR" }
+            end
+            # no consumidos?
+            if NcfUsage.where(rnc: rnc_emisor).any? { |u| u.encf.to_s[1, 2].to_i == tipo && u.encf.to_s[3..].to_i.between?(desde, hasta) }
+              errors << { codigo: "E026", campo: "rango", mensaje: "El rango incluye e-NCF ya utilizados, no se puede anular", severidad: "ERROR" }
+            end
+          end
+        end
+      end
+
       if errors.empty?
-        NcfAnnulation.create!(
+        annulation = NcfAnnulation.create!(
           rnc_emisor: rnc_emisor,
-          cantidad_anulados: cantidad.to_i,
+          cantidad_anulados: parsed.sum { |l| l[:cantidad].to_i },
           fecha_hora_anulacion: nil,
           xml_content: @xml
         )
+        # Registrar rangos anulados y marcar secuencias totalmente anuladas.
+        parsed.each do |line|
+          line[:rangos].each do |r|
+            desde = r[:desde].to_s[3..].to_i
+            hasta = r[:hasta].to_s[3..].to_i
+            NcfAnnulledRange.create!(
+              rnc: rnc_emisor,
+              tipo: line[:tipo].to_i,
+              desde: desde,
+              hasta: hasta,
+              ncf_annulation: annulation
+            )
+            NcfSequence.where(rnc: rnc_emisor, tipo: line[:tipo].to_i).each do |s|
+              if s.desde == desde && s.hasta == hasta
+                s.update!(anulada: true, activa: false)
+              end
+            end
+          end
+        end
       end
 
       payload = {
@@ -76,6 +118,27 @@ module Ecfs
     def text_of(doc, name)
       node = doc.xpath("//*[local-name()='#{name}']").first
       node&.text&.strip
+    end
+
+    def parse_detail(doc)
+      lines = []
+      doc.xpath("//*[local-name()='Anulacion']").each do |anul|
+        tipo = text_of_node(anul, "TipoeCF")
+        cantidad = text_of_node(anul, "CantidadeNCFAnulados")
+        rangos = []
+        anul.xpath(".//*[local-name()='Secuencias']").each do |sec|
+          desde = text_of_node(sec, "SecuenciaeNCFDesde")
+          hasta = text_of_node(sec, "SecuenciaeNCFHasta")
+          rangos << { desde: desde, hasta: hasta }
+        end
+        lines << { tipo: tipo, cantidad: cantidad, rangos: rangos }
+      end
+      lines
+    end
+
+    def text_of_node(node, name)
+      n = node.xpath(".//*[local-name()='#{name}']").first
+      n&.text&.strip
     end
   end
 end

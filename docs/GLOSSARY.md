@@ -150,6 +150,10 @@ Cada tipo tiene **su propio rango**. No se puede usar un e-NCF de tipo 31 para u
 | `E020` | Secuencia no autorizada |
 | `E021` | Tipo de comprobante no coincide con la secuencia |
 | `E022` | Formato de RNC inválido |
+| `E023` | Salto de secuencia (e-NCF no sigue el orden) |
+| `E024` | e-NCF anulado |
+| `E025` | Rango de e-NCF agotado |
+| `E026` | El rango incluye e-NCF ya utilizados |
 | `X001` | Error de validación XSD |
 
 ## Estados del e-CF (consulta)

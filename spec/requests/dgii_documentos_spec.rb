@@ -13,6 +13,10 @@ RSpec.describe "DGII Documentos (Fase 5)", type: :request do
       c.alias_name = "simulator"
       c.active = true
     end
+    NcfSequence.find_or_create_by!(rnc: "101234567", tipo: 31, desde: 9999, hasta: 9999) do |s|
+      s.fecha_vencimiento = Date.current + 365
+      s.activa = true
+    end
 
     get "/testecf/autenticacion/api/autenticacion/semilla"
     seed = response.body

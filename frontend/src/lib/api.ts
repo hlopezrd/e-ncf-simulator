@@ -147,7 +147,12 @@ export interface NcfSequenceItem {
   hasta: number;
   fechaVencimiento: string | null;
   activa: boolean;
+  anulada: boolean;
   vigente: boolean;
+  estado: string;
+  consumidos: number;
+  disponibles: number;
+  anulados: number;
   createdAt: string;
   deletedAt: string | null;
 }

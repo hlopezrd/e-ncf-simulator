@@ -27,7 +27,6 @@ RSpec.describe "DGII Consultas", type: :request do
 
     # receive an e-CF
     ecf_xml = File.read(Rails.root.join("spec", "fixtures", "xml", "valido_xsd.xml"))
-    ecf_xml = ecf_xml.sub("E310000000001", "E310000009999")
     signed_ecf = Ecfs::CryptoService.sign(Nokogiri::XML(ecf_xml).to_xml)
     post "/testecf/recepcion/api/facturaselectronicas",
          params: { xml: signed_ecf },
@@ -54,18 +53,18 @@ RSpec.describe "DGII Consultas", type: :request do
 
   it "consulta estado by rnc+encf" do
     get "/testecf/consultaestado/api/Consultas/Estado",
-        params: { rncEmisor: "101234567", ncfElectronico: "E310000009999" },
+        params: { rncEmisor: "101234567", ncfElectronico: "E310000000001" },
         headers: { "Authorization" => "Bearer #{@token}" }
     expect(response).to have_http_status(:ok)
     json = JSON.parse(response.body)
     expect(json["codigo"]).to eq(1)
     expect(json["rncEmisor"]).to eq("101234567")
-    expect(json["ncfElectronico"]).to eq("E310000009999")
+    expect(json["ncfElectronico"]).to eq("E310000000001")
   end
 
   it "consulta trackids by rnc+encf" do
     get "/testecf/consultatrackids/api/TrackIds/Consulta",
-        params: { rncEmisor: "101234567", encf: "E310000009999" },
+        params: { rncEmisor: "101234567", encf: "E310000000001" },
         headers: { "Authorization" => "Bearer #{@token}" }
     expect(response).to have_http_status(:ok)
     json = JSON.parse(response.body)

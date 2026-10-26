@@ -116,6 +116,8 @@ export function NcfSequences() {
               <th>Tipo</th>
               <th>Desde</th>
               <th>Hasta</th>
+              <th>Consumidos</th>
+              <th>Disponibles</th>
               <th>Vencimiento</th>
               <th>Estado</th>
               <th>Acciones</th>
@@ -148,10 +150,12 @@ export function NcfSequences() {
                     <td>{s.tipo}</td>
                     <td>{s.desde}</td>
                     <td>{s.hasta}</td>
+                    <td>{s.consumidos}</td>
+                    <td>{s.disponibles}</td>
                     <td>{s.fechaVencimiento ? new Date(s.fechaVencimiento).toLocaleDateString() : "—"}</td>
                     <td>
-                      <span className={`badge ${s.vigente ? "success" : "secondary"}`}>
-                        {s.vigente ? "Vigente" : (s.activa ? "Vencida" : "Inactiva")}
+                      <span className={`badge ${s.vigente ? "success" : (s.anulada ? "danger" : "secondary")}`}>
+                        {s.estado}
                       </span>
                     </td>
                     <td style={{ display: "flex", gap: "var(--space-2)" }}>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_26_124104) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_26_140809) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -140,6 +140,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_124104) do
     t.datetime "deleted_at"
   end
 
+  create_table "ncf_annulled_ranges", force: :cascade do |t|
+    t.string "rnc", null: false
+    t.integer "tipo", null: false
+    t.integer "desde", null: false
+    t.integer "hasta", null: false
+    t.integer "ncf_annulation_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ncf_annulation_id"], name: "index_ncf_annulled_ranges_on_ncf_annulation_id"
+    t.index ["rnc", "tipo"], name: "index_ncf_annulled_ranges_on_rnc_and_tipo"
+  end
+
   create_table "ncf_sequences", force: :cascade do |t|
     t.string "rnc", null: false
     t.integer "tipo", null: false
@@ -150,6 +162,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_124104) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
+    t.boolean "anulada", default: false, null: false
     t.index ["rnc", "tipo"], name: "index_ncf_sequences_on_rnc_and_tipo"
   end
 
@@ -229,6 +242,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_124104) do
   end
 
   add_foreign_key "auth_tokens", "users"
+  add_foreign_key "ncf_annulled_ranges", "ncf_annulations"
   add_foreign_key "users", "roles"
   add_foreign_key "validation_errors", "electronic_invoices"
 end
