@@ -1,6 +1,6 @@
 # Plan: Clonar comportamiento de DGII (e-CF)
 
-**Estado general:** En progreso — Fases 1–7 completadas; Fase 8 parcial (8.1–8.5, 8.7–8.10 aplicadas).
+**Estado general:** En progreso — Fases 1–7 completadas; Fase 8 parcial (8.1–8.10 aplicadas).
 
 **Última actualización:** 2026-10-26
 
@@ -112,7 +112,7 @@ El simulador debe ser un **reemplazo funcional de la API DGII**: mismos endpoint
 - [x] **8.3** Rate limiting en controladores DGII.
 - [x] **8.4** Cache de schemas XSD compilados.
 - [x] **8.5** Límite de tamaño 1MB en `XsdValidation`.
-- [ ] **8.6** Agregar `JWT_SECRET` a `.kamal/secrets` y `config/deploy.yml`. (pendiente de deploy)
+- [x] **8.6** Agregar `JWT_SECRET` a `.kamal/secrets` y `config/deploy.yml`.
 
 ### 🟠 Altas
 
