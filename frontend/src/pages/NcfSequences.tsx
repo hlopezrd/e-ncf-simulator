@@ -118,6 +118,7 @@ export function NcfSequences() {
               <th>Hasta</th>
               <th>Consumidos</th>
               <th>Disponibles</th>
+              <th>Anulados</th>
               <th>Vencimiento</th>
               <th>Estado</th>
               <th>Acciones</th>
@@ -152,6 +153,7 @@ export function NcfSequences() {
                     <td>{s.hasta}</td>
                     <td>{s.consumidos}</td>
                     <td>{s.disponibles}</td>
+                    <td>{s.anulados}{s.rangosAnulados.length ? ` (${s.rangosAnulados.map((r) => `${r.desde}-${r.hasta}`).join(", ")})` : ""}</td>
                     <td>{s.fechaVencimiento ? new Date(s.fechaVencimiento).toLocaleDateString() : "—"}</td>
                     <td>
                       <span className={`badge ${s.vigente ? "success" : (s.anulada ? "danger" : "secondary")}`}>

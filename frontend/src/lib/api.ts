@@ -153,6 +153,7 @@ export interface NcfSequenceItem {
   consumidos: number;
   disponibles: number;
   anulados: number;
+  rangosAnulados: { desde: number; hasta: number }[];
   createdAt: string;
   deletedAt: string | null;
 }

@@ -78,6 +78,7 @@ module Api
         consumidos: s.consumidos_count,
         disponibles: s.disponibles_count,
         anulados: s.anulados_count,
+        rangosAnulados: NcfAnnulledRange.where(rnc: s.rnc, tipo: s.tipo).map { |a| { desde: a.desde, hasta: a.hasta } },
         createdAt: s.created_at.iso8601,
         deletedAt: s.deleted_at&.iso8601
       }
