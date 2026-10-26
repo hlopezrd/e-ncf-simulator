@@ -1,6 +1,6 @@
 # Plan: Clonar comportamiento de DGII (e-CF)
 
-**Estado general:** En progreso — Fases 1, 2, 3, 4 y 5 completadas.
+**Estado general:** En progreso — Fases 1–6 completadas.
 
 **Última actualización:** 2026-10-26
 
@@ -90,10 +90,10 @@ El simulador debe ser un **reemplazo funcional de la API DGII**: mismos endpoint
 - [x] XSDs obtenidos de DGII (ARECF, ACECF, ANECF, RFCE-32, Semilla).
 - [ ] Endpoints de consulta correspondientes. (pendiente)
 
-## Fase 6 — Directorio y estatus
+## Fase 6 — Directorio y estatus ✅ COMPLETADA
 
-- [ ] Directorio de contribuyentes electrónicos.
-- [ ] Estatus de servicios y ventanas de mantenimiento.
+- [x] Directorio de contribuyentes electrónicos (`obtenerdirectorioporrnc`, `listado`).
+- [x] Estatus de servicios y ventanas de mantenimiento (`obtenerestatus`, `ventanasmantenimiento`, `verificarestado`).
 
 ## Fase 7 — Contrato y pruebas
 

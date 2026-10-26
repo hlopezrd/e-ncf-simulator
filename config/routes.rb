@@ -36,6 +36,11 @@ Rails.application.routes.draw do
       post "aprobacioncomercial/api/AprobacionComercial", to: "api/dgii/aprobacion_comercial#create"
       post "anulacionrangos/api/operaciones/anularrango", to: "api/dgii/anulacion#create"
       post "recepcionfc/api/recepcion/ecf", to: "api/dgii/resumen#create"
+      get "consultadirectorio/api/consultas/obtenerdirectorioporrnc", to: "api/dgii/directorio#obtener_por_rnc"
+      get "consultadirectorio/api/consultas/listado", to: "api/dgii/directorio#listado"
+      get "api/estatusservicios/obtenerestatus", to: "api/dgii/estatus#obtener_estatus"
+      get "api/estatusservicios/obtenerventanasmantenimiento", to: "api/dgii/estatus#ventanas_mantenimiento"
+      get "api/estatusservicios/verificarestado", to: "api/dgii/estatus#verificar_estado"
     end
   end
   dgii_auth_routes.call("/testecf")
