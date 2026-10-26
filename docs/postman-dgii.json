@@ -1,0 +1,201 @@
+{
+  "info": {
+    "name": "e-CF Simulator (DGII-compatible)",
+    "description": "Colección para probar el simulador DGII. Variables: baseUrl (http://localhost:13000), token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:13000", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticación",
+      "item": [
+        {
+          "name": "Obtener semilla",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/testecf/autenticacion/api/autenticacion/semilla"
+          }
+        },
+        {
+          "name": "Validar semilla (obtener token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.token) pm.collectionVariables.set('token', j.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "xml", "type": "file", "src": "", "description": "Semilla firmada (.xml)" }
+              ]
+            },
+            "url": "{{baseUrl}}/testecf/autenticacion/api/autenticacion/validarsemilla"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Recepción e-CF",
+      "item": [
+        {
+          "name": "Enviar e-CF",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "xml", "type": "file", "src": "", "description": "e-CF firmado (.xml)" }
+              ]
+            },
+            "url": "{{baseUrl}}/testecf/recepcion/api/facturaselectronicas"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Consultas",
+      "item": [
+        {
+          "name": "Consulta resultado (trackId)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/testecf/consultaresultado/api/Consultas/Estado?trackId={{trackId}}"
+          }
+        },
+        {
+          "name": "Consulta estado (RNC + eNCF)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/testecf/consultaestado/api/Consultas/Estado?rncEmisor=101234567&ncfElectronico=E310000000001&codigoSeguridad=ABCDEF"
+          }
+        },
+        {
+          "name": "Consulta TrackIds",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/testecf/consultatrackids/api/TrackIds/Consulta?rncEmisor=101234567&encf=E310000000001"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Aprobación comercial",
+      "item": [
+        {
+          "name": "Enviar ACECF",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "xml", "type": "file", "src": "", "description": "ACECF firmado (.xml)" }
+              ]
+            },
+            "url": "{{baseUrl}}/testecf/aprobacioncomercial/api/AprobacionComercial"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Anulación de rangos",
+      "item": [
+        {
+          "name": "Enviar ANECF",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "xml", "type": "file", "src": "", "description": "ANECF firmado (.xml)" }
+              ]
+            },
+            "url": "{{baseUrl}}/testecf/anulacionrangos/api/operaciones/anularrango"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Resumen FC",
+      "item": [
+        {
+          "name": "Enviar RFCE",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "xml", "type": "file", "src": "", "description": "RFCE firmado (.xml)" }
+              ]
+            },
+            "url": "{{baseUrl}}/testecf/recepcionfc/api/recepcion/ecf"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Directorio y estatus",
+      "item": [
+        {
+          "name": "Directorio por RNC",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/testecf/consultadirectorio/api/consultas/obtenerdirectorioporrnc?rnc=101234567"
+          }
+        },
+        {
+          "name": "Listado contribuyentes",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/testecf/consultadirectorio/api/consultas/listado"
+          }
+        },
+        {
+          "name": "Estatus servicios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer apikey" }],
+            "url": "{{baseUrl}}/testecf/api/estatusservicios/obtenerestatus"
+          }
+        },
+        {
+          "name": "Ventanas mantenimiento",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer apikey" }],
+            "url": "{{baseUrl}}/testecf/api/estatusservicios/obtenerventanasmantenimiento"
+          }
+        },
+        {
+          "name": "Verificar estado",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer apikey" }],
+            "url": "{{baseUrl}}/testecf/api/estatusservicios/verificarestado?ambiente=1"
+          }
+        }
+      ]
+    }
+  ]
+}

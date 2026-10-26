@@ -1,0 +1,363 @@
+openapi: 3.0.3
+info:
+  title: e-CF Simulator (DGII-compatible)
+  version: 1.0.0
+  description: |
+    Simulador de la API de Facturación Electrónica de la DGII (República Dominicana).
+    Todos los endpoints imitan los contratos oficiales de DGII. El host del simulador
+    reemplaza a ecf.dgii.gov.do; los paths son idénticos.
+servers:
+  - url: http://localhost:13000/testecf
+    description: Ambiente de pre-certificación (simulado)
+paths:
+  /autenticacion/api/autenticacion/semilla:
+    get:
+      summary: Obtener semilla
+      responses:
+        "200":
+          description: XML con la semilla
+          content:
+            application/xml:
+              schema:
+                type: string
+  /autenticacion/api/autenticacion/validarsemilla:
+    post:
+      summary: Validar semilla firmada y obtener token
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                xml:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Token JWT
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+                  expira: { type: string, format: date-time }
+                  expedido: { type: string, format: date-time }
+        "401":
+          description: Semilla inválida o firma incorrecta
+  /recepcion/api/facturaselectronicas:
+    post:
+      summary: Recepción de e-CF
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                xml:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: TrackId asignado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trackId: { type: string }
+                  error: { type: string }
+                  mensajes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        valor: { type: string }
+                        codigo: { type: string }
+  /consultaresultado/api/Consultas/Estado:
+    get:
+      summary: Consulta de resultado por TrackId
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: trackId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Estado del e-CF
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trackId: { type: string }
+                  codigo: { type: integer, enum: [0,1,2,3,4] }
+                  estado: { type: string, enum: ["No encontrado","Aceptado","Rechazado","En Proceso","Aceptado Condicional"] }
+                  rnc: { type: string }
+                  encf: { type: string }
+                  secuenciaUtilizada: { type: boolean }
+                  fechaRecepcion: { type: string, format: date-time }
+                  mensajes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        valor: { type: string }
+                        codigo: { type: string }
+  /consultaestado/api/Consultas/Estado:
+    get:
+      summary: Consulta de estado por RNC + e-NCF
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: rncEmisor
+          required: true
+          schema: { type: string }
+        - in: query
+          name: ncfElectronico
+          required: true
+          schema: { type: string }
+        - in: query
+          name: rncComprador
+          schema: { type: string }
+        - in: query
+          name: codigoSeguridad
+          schema: { type: string }
+      responses:
+        "200":
+          description: Estado del e-CF
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  codigo: { type: integer, enum: [0,1,2] }
+                  estado: { type: string, enum: ["No encontrado","Aceptado","Rechazado"] }
+                  rncEmisor: { type: string }
+                  ncfElectronico: { type: string }
+                  montoTotal: { type: number }
+                  totalITBIS: { type: number }
+                  fechaEmision: { type: string }
+                  fechaFirma: { type: string }
+                  rncComprador: { type: string }
+                  codigoSeguridad: { type: string }
+  /consultatrackids/api/TrackIds/Consulta:
+    get:
+      summary: Consulta de TrackIds por RNC + e-NCF
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: rncEmisor
+          required: true
+          schema: { type: string }
+        - in: query
+          name: encf
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Lista de TrackIds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    trackId: { type: string }
+                    estado: { type: string }
+                    fechaRecepcion: { type: string, format: date-time }
+  /aprobacioncomercial/api/AprobacionComercial:
+    post:
+      summary: Recepción de Aprobación Comercial (ACECF)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                xml:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Resultado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  codigo: { type: string, enum: ["01","02"] }
+                  estado: { type: string }
+                  mensaje: { type: array, items: { type: string } }
+  /anulacionrangos/api/operaciones/anularrango:
+    post:
+      summary: Anulación de rangos de e-NCF (ANECF)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                xml:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Resultado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rnc: { type: string }
+                  codigo: { type: string }
+                  nombre: { type: string }
+                  mensajes: { type: array, items: { type: string } }
+  /recepcionfc/api/recepcion/ecf:
+    post:
+      summary: Recepción de Resumen de Factura de Consumo (RFCE)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                xml:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Resultado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  codigo: { type: integer }
+                  estado: { type: string }
+                  mensajes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        valor: { type: string }
+                        codigo: { type: string }
+                  encf: { type: string }
+                  secuenciaUtilizada: { type: boolean }
+  /consultadirectorio/api/consultas/obtenerdirectorioporrnc:
+    get:
+      summary: Directorio por RNC
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: rnc
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Datos del contribuyente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nombre: { type: string }
+                  rnc: { type: string }
+                  urlRecepcion: { type: string }
+                  urlAceptacion: { type: string }
+                  urlOpcional: { type: string }
+  /consultadirectorio/api/consultas/listado:
+    get:
+      summary: Listado de contribuyentes electrónicos
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    nombre: { type: string }
+                    rnc: { type: string }
+                    urlRecepcion: { type: string }
+                    urlAceptacion: { type: string }
+                    urlOpcional: { type: string }
+  /api/estatusservicios/obtenerestatus:
+    get:
+      summary: Estatus de servicios
+      parameters:
+        - in: query
+          name: ambiente
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Lista de servicios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    servicio: { type: string }
+                    estatus: { type: string }
+                    ambiente: { type: string }
+  /api/estatusservicios/obtenerventanasmantenimiento:
+    get:
+      summary: Ventanas de mantenimiento
+      responses:
+        "200":
+          description: Ventanas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ventanaMantenimientos:
+                    type: array
+                    items: { type: object }
+  /api/estatusservicios/verificarestado:
+    get:
+      summary: Verificar estado de un ambiente
+      parameters:
+        - in: query
+          name: ambiente
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Estado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  estado: { type: string }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

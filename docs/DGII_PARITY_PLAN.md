@@ -1,6 +1,6 @@
 # Plan: Clonar comportamiento de DGII (e-CF)
 
-**Estado general:** En progreso — Fases 1–6 completadas.
+**Estado general:** Completado — Fases 1–7 completadas.
 
 **Última actualización:** 2026-10-26
 
@@ -95,11 +95,11 @@ El simulador debe ser un **reemplazo funcional de la API DGII**: mismos endpoint
 - [x] Directorio de contribuyentes electrónicos (`obtenerdirectorioporrnc`, `listado`).
 - [x] Estatus de servicios y ventanas de mantenimiento (`obtenerestatus`, `ventanasmantenimiento`, `verificarestado`).
 
-## Fase 7 — Contrato y pruebas
+## Fase 7 — Contrato y pruebas ✅ COMPLETADA
 
-- [ ] OpenAPI spec de los endpoints DGII.
-- [ ] Colección de Postman.
-- [ ] Tests de integración por flujo completo.
+- [x] OpenAPI spec de los endpoints DGII (`docs/openapi-dgii.yaml`).
+- [x] Colección de Postman (`docs/postman-dgii.json`).
+- [x] Tests de integración por flujo (autenticación, recepción, consultas, documentos).
 
 ---
 
