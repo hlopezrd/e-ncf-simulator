@@ -77,6 +77,51 @@ Roles de ejemplo: **Empresa A** = emisor (vendedor, RNC `101234567`), **Empresa 
 - Si el tipo **no requiere RNC comprador** (32, 43, 46, 47): no hay aprobación comercial; para consumo de alto volumen se usa **RFCE**.
 - **Tipo 41** es el caso especial: los roles se invierten (el comprador es el emisor del comprobante).
 
+## Rangos de e-NCF
+
+### Anatomía del e-NCF
+
+El e-NCF tiene **13 posiciones**:
+
+```
+E  31  0000000001
+│  │   └────────── secuencia (10 dígitos)
+│  └────────────── tipo de comprobante (2 dígitos)
+└───────────────── prefijo electrónico
+```
+
+Ejemplo: `E310000000001` = electrónico, tipo **31**, secuencia **1**.
+
+### Qué es un rango
+
+La DGII autoriza **bloques por RNC y por tipo**. Por ejemplo:
+
+| RNC | Tipo | Rango autorizado | e-NCF válidos |
+|---|---|---|---|
+| `101234567` | 31 | 1 – 1000 | `E310000000001` … `E310000001000` |
+| `101234567` | 32 | 1 – 500 | `E320000000001` … `E320000000500` |
+| `101234567` | 34 | 1 – 200 | `E340000000001` … `E340000000200` |
+
+Cada tipo tiene **su propio rango**. No se puede usar un e-NCF de tipo 31 para una factura tipo 32.
+
+### Reglas
+
+- **Por RNC + tipo**: el rango pertenece a un RNC y a un tipo específico.
+- **Vigencia**: la DGII asigna una fecha de vencimiento. Pasada esa fecha, el rango no sirve.
+- **Consumo**: cada e-CF aceptado consume un e-NCF.
+- **Rechazo**: si la DGII rechaza el e-CF, el e-NCF **no se consume**; puedes corregir y reenviar con el mismo número.
+- **Duplicado**: un e-NCF ya aceptado no se puede reutilizar (el simulador lo detecta con `E010`).
+- **Secuencialidad**: la DGII espera uso secuencial (sin saltos). Si no usas todo el rango, puedes solicitar **anulación del rango** (ANECF) o dejarlo vencer.
+- **Anulación**: el ANECF es para **rangos no usados**, no para anular una factura individual (eso se hace con Nota de Crédito, tipo 34).
+
+### En el simulador
+
+- **`NcfSequence`**: `rnc`, `tipo`, `desde`, `hasta`, `fecha_vencimiento`, `activa`.
+- **`NcfUsage`**: `rnc`, `encf`, `track_id` — se crea **solo cuando el e-CF es aceptado**.
+- Registro: `bin/rails ncf_sequences:register RNC=... TIPO=31 DESDE=1 HASTA=1000 VENCIMIENTO=2027-12-31`.
+- Validación en recepción: tipo de `encf[1,2]` vs. tipo del XML → `E021`; secuencia de `encf[3..]` vs. rango activo/vigente → `E020`; duplicado → `E010`; `secuenciaUtilizada` solo si no hubo errores.
+- **Limitaciones actuales**: no genera el siguiente número (el cliente elige el e-NCF), no exige orden secuencial, el ANECF solo registra la anulación sin desactivar el rango, y no hay UI de rangos en el portal.
+
 ## Mapeo en el simulador
 
 | Acción | Endpoint | Certificado que se verifica |

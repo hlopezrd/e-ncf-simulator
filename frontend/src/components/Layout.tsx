@@ -8,6 +8,7 @@ const allNav = [
   { to: "/trackids", label: "TrackIds", roles: ["admin", "operator", "viewer"] },
   { to: "/empresas", label: "Empresas", roles: ["admin", "operator", "viewer"] },
   { to: "/certificados", label: "Certificados", roles: ["admin"] },
+  { to: "/ncf-sequences", label: "Secuencias NCF", roles: ["admin"] },
   { to: "/validaciones", label: "Validaciones", roles: ["admin", "operator", "viewer"] },
   { to: "/reglas", label: "Reglas", roles: ["admin", "operator"] },
   { to: "/cors", label: "CORS", roles: ["admin"] },

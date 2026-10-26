@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :roles, only: [ :index ], controller: "api/roles"
     resources :auditoria, only: [ :index ], controller: "api/auditoria"
     resources :certificados, only: [ :index, :create, :update, :destroy ], controller: "api/certificados"
+  resources :ncf_sequences, only: [ :index, :create, :update, :destroy ], controller: "api/ncf_sequences"
   end
 
   # DGII-compatible endpoints (Fase 1: autenticación por semilla)

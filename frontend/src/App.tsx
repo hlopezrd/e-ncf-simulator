@@ -12,6 +12,7 @@ const EcfList = lazy(() => import("./pages/EcfList").then((m) => ({ default: m.E
 const EcfDetail = lazy(() => import("./pages/EcfDetail").then((m) => ({ default: m.EcfDetail })));
 const TrackIds = lazy(() => import("./pages/TrackIds").then((m) => ({ default: m.TrackIds })));
 const Certificados = lazy(() => import("./pages/Certificados").then((m) => ({ default: m.Certificados })));
+const NcfSequences = lazy(() => import("./pages/NcfSequences").then((m) => ({ default: m.NcfSequences })));
 const Validaciones = lazy(() => import("./pages/Validaciones").then((m) => ({ default: m.Validaciones })));
 const Reglas = lazy(() => import("./pages/Reglas").then((m) => ({ default: m.Reglas })));
 const AllowedOrigins = lazy(() => import("./pages/AllowedOrigins").then((m) => ({ default: m.AllowedOrigins })));
@@ -42,6 +43,7 @@ function AppRoutes() {
                 <Route path="/trackids" element={<TrackIds />} />
                 <Route path="/empresas" element={<Empresas />} />
                 <Route path="/certificados" element={<Certificados />} />
+<Route path="/ncf-sequences" element={<NcfSequences />} />
                 <Route path="/reglas" element={<Reglas />} />
                 <Route path="/cors" element={<AllowedOrigins />} />
                 <Route path="/usuarios" element={<Usuarios />} />

@@ -139,6 +139,33 @@ export const certificadosApi = {
   remove: (id: number) => apiFetch<void>(`/api/certificados/${id}`, { method: "DELETE" }),
 };
 
+export interface NcfSequenceItem {
+  id: number;
+  rnc: string;
+  tipo: number;
+  desde: number;
+  hasta: number;
+  fechaVencimiento: string | null;
+  activa: boolean;
+  vigente: boolean;
+  createdAt: string;
+  deletedAt: string | null;
+}
+
+export interface NcfSequenceListResponse {
+  data: NcfSequenceItem[];
+  meta: { total: number };
+}
+
+export const ncfSequencesApi = {
+  list: () => apiFetch<NcfSequenceListResponse>("/api/ncf_sequences"),
+  create: (data: { rnc: string; tipo: number; desde: number; hasta: number; fecha_vencimiento: string; activa?: boolean }) =>
+    apiFetch<NcfSequenceItem>("/api/ncf_sequences", { method: "POST", body: JSON.stringify(data) }),
+  update: (id: number, data: Partial<{ rnc: string; tipo: number; desde: number; hasta: number; fecha_vencimiento: string; activa: boolean }>) =>
+    apiFetch<NcfSequenceItem>(`/api/ncf_sequences/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  remove: (id: number) => apiFetch<void>(`/api/ncf_sequences/${id}`, { method: "DELETE" }),
+};
+
 export interface ValidacionItem {
   id: number;
   codigo: string;
