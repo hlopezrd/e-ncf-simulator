@@ -14,13 +14,14 @@ module Auth
     end
 
     def call
-      doc = Nokogiri::XML(@xml)
+      doc = Nokogiri::XML(@xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
       valor_node = doc.xpath("//*[local-name()='valor']").first
       valor = valor_node&.text&.strip
       return failure("xml inválido: falta valor") if valor.blank?
 
       seed = AuthSeed.find_by(valor: valor)
-      return failure("semilla no encontrada o ya usada") unless seed&.vigente?
+      return failure("semilla no encontrada o ya usada") unless seed
+      return failure("semilla expirada") if seed.expirada?
 
       signature_node = doc.xpath("//*[local-name()='Signature']").first
       return failure("falta firma digital") unless signature_node
@@ -47,6 +48,13 @@ module Auth
       rnc = registered_cert.rnc
       now = Time.current
       exp = now + 1.hour
+
+      # Reclamo atómico de la semilla (evita race condition / replay).
+      affected = AuthSeed.where(id: seed.id, usado: false)
+                         .where("expira > ?", now)
+                         .update_all(usado: true, rnc: rnc, updated_at: now)
+      return failure("semilla no encontrada, usada o expirada") unless affected == 1
+
       claims = {
         "name" => rnc,
         "jti" => SecureRandom.uuid,
@@ -57,8 +65,6 @@ module Auth
         "aud" => "USUARIOS.DGII.FE"
       }
       token = JWT.encode(claims, jwt_secret, "HS256")
-
-      seed.marcar_usada!(rnc)
 
       Result.new(success?: true, token: token, expira: exp.utc.iso8601, expedido: now.utc.iso8601, error: nil)
     rescue StandardError => e

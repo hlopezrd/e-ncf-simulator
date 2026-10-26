@@ -39,7 +39,7 @@ module Ecfs
       end
 
       begin
-        doc = Nokogiri::XML(@xml)
+        doc = Nokogiri::XML(@xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
       rescue Nokogiri::XML::SyntaxError => e
         @errors << error("E002", "xml", "El XML está mal formado: #{e.message}", "ERROR")
         return build_result(nil, nil, nil, nil, nil, nil, false)
@@ -63,6 +63,8 @@ module Ecfs
 
       if rnc.blank?
         @errors << error("E004", "rncEmisor", "El RNC emisor es obligatorio", "ERROR")
+      elsif !rnc.to_s.match?(/\A\d{9}(\d{2})?\z/)
+        @errors << error("E022", "rncEmisor", "El RNC emisor no tiene un formato válido", "ERROR")
       end
 
       if encf.blank?

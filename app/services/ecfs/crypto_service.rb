@@ -16,7 +16,7 @@ module Ecfs
     end
 
     def self.sign(xml)
-      doc = Nokogiri::XML(xml)
+      doc = Nokogiri::XML(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
       # Remove any existing signature
       doc.xpath("//*[local-name()='Signature']").remove
 
@@ -70,7 +70,7 @@ module Ecfs
     end
 
     def self.verify_embedded(xml)
-      doc = Nokogiri::XML(xml)
+      doc = Nokogiri::XML(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
       signature_node = doc.xpath("//*[local-name()='Signature']").first
       return false unless signature_node
 
@@ -110,7 +110,7 @@ module Ecfs
       now = Time.now
       return false if now < cert.not_before || now > cert.not_after
 
-      doc = Nokogiri::XML(xml)
+      doc = Nokogiri::XML(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
       signature_node = doc.xpath("//*[local-name()='Signature']").first
       return false unless signature_node
 

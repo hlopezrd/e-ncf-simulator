@@ -30,13 +30,19 @@ class ApplicationController < ActionController::API
 
   def audit!(action, target, details = nil)
     AuditLog.create!(
-      actor: current_auth_token&.rnc || "anonymous",
+      actor: current_actor,
       action: action,
       target: target,
       details: details
     )
   rescue StandardError
     nil
+  end
+
+  def current_actor
+    return current_auth_token.rnc if current_auth_token&.rnc.present?
+    return current_rnc if respond_to?(:current_rnc) && current_rnc.present?
+    "anonymous"
   end
 
   MAX_REQUEST_BYTES = 5.megabytes

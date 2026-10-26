@@ -1,6 +1,8 @@
 module Api
   module Dgii
     class ConsultasController < BaseController
+      rate_limit to: 120, within: 1.minute
+
       def resultado
         track_id = params[:trackId]
         invoice = ElectronicInvoice.find_by(track_id: track_id)

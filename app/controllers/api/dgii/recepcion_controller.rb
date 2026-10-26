@@ -3,6 +3,8 @@ require "base64"
 module Api
   module Dgii
     class RecepcionController < BaseController
+      rate_limit to: 60, within: 1.minute, only: :create
+
       def create
         xml = extract_xml
         if xml.blank?
@@ -21,6 +23,7 @@ module Api
         end
 
         result = Ecfs::ReceiveService.call(xml: xml)
+        audit!("dgii_recepcion", "ElectronicInvoice", result.payload.to_json)
         render json: result.payload, status: result.status_code
       end
 

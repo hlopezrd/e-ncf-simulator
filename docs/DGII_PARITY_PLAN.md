@@ -1,6 +1,6 @@
 # Plan: Clonar comportamiento de DGII (e-CF)
 
-**Estado general:** Completado — Fases 1–7 completadas.
+**Estado general:** En progreso — Fases 1–7 completadas; Fase 8 parcial (8.1–8.5, 8.7–8.10 aplicadas).
 
 **Última actualización:** 2026-10-26
 
@@ -100,6 +100,49 @@ El simulador debe ser un **reemplazo funcional de la API DGII**: mismos endpoint
 - [x] OpenAPI spec de los endpoints DGII (`docs/openapi-dgii.yaml`).
 - [x] Colección de Postman (`docs/postman-dgii.json`).
 - [x] Tests de integración por flujo (autenticación, recepción, consultas, documentos).
+
+---
+
+## Fase 8 — Seguridad (endurecimiento)
+
+### 🔴 Críticas (implementar primero)
+
+- [x] **8.1** Race condition en semilla: actualización atómica condicionada.
+- [x] **8.2** XXE: `NONET | STRICT` aplicado en `ValidateXmlService`, `XsdValidation`, `CryptoService` y `SeedValidationService`.
+- [x] **8.3** Rate limiting en controladores DGII.
+- [x] **8.4** Cache de schemas XSD compilados.
+- [x] **8.5** Límite de tamaño 1MB en `XsdValidation`.
+- [ ] **8.6** Agregar `JWT_SECRET` a `.kamal/secrets` y `config/deploy.yml`. (pendiente de deploy)
+
+### 🟠 Altas
+
+- [x] **8.7** PaperTrail `whodunnit` en `Api::Dgii::BaseController#authenticate_dgii!`.
+- [x] **8.8** Auditoría (`audit!`) en acciones DGII (recepción, anulación, aprobación, resumen).
+- [x] **8.9** Limpieza periódica de semillas expiradas/usadas (`seeds:purge`).
+- [x] **8.10** Rate limiting en consultas (`consultaestado`).
+- [ ] **8.11** CORS con credenciales (si se requiere cross-origin para el portal). (opcional)
+
+### 🟡 Medias
+
+- [ ] **8.12** Validación de formato de RNC (9 u 11 dígitos) en servicios y controladores.
+- [ ] **8.13** Mapear errores XSD a códigos DGII genéricos (opcional).
+- [ ] **8.14** Documentar regeneración de certificado tras deploy limpio.
+- [ ] **8.15** `config.log_level = :warn` en producción.
+- [ ] **8.16** Verificar CSP/HSTS en producción.
+
+### Lo que ya está bien
+
+- Token en cookie HttpOnly, Secure, SameSite=Strict.
+- Hashing de tokens con SHA-256.
+- Firma digital RSA-SHA256 con verificación de vigencia.
+- Aceptación de certificados self-signed y CA.
+- Validación XSD.
+- Soft-delete (paranoia) + PaperTrail.
+- Rate limiting en auth y recepción.
+- Payload limit 5MB a nivel Rack.
+- CORS vía tabla `allowed_origins`.
+- Sin credenciales hardcodeadas (bootstrap por rake task).
+- `filter_parameters` filtra token, secret, certificate.
 
 ---
 

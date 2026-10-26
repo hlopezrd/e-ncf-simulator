@@ -1,6 +1,8 @@
 module Api
   module Dgii
     class DirectorioController < BaseController
+      rate_limit to: 60, within: 1.minute
+
       def obtener_por_rnc
         rnc = params[:rnc]
         cert = Certificate.active.find_by(rnc: rnc)

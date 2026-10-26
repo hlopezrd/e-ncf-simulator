@@ -3,6 +3,9 @@ require "base64"
 module Api
   module Dgii
     class AutenticacionController < ApplicationController
+      rate_limit to: 20, within: 1.minute, only: :semilla
+      rate_limit to: 20, within: 1.minute, only: :validar_semilla
+
       def semilla
         valor = SecureRandom.base64(32)
         fecha = Time.current

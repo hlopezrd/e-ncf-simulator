@@ -24,6 +24,7 @@ module Api
             verify_aud: true
           )
           @current_rnc = payload.first["name"]
+          PaperTrail.request.whodunnit = @current_rnc
         rescue JWT::DecodeError, JWT::ExpiredSignature, JWT::InvalidIssuerError, JWT::InvalidAudError, JWT::VerificationError
           render json: { error: "Token inválido o expirado" }, status: :unauthorized
         end

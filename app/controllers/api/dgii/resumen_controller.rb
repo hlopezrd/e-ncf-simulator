@@ -3,6 +3,8 @@ require "base64"
 module Api
   module Dgii
     class ResumenController < BaseController
+      rate_limit to: 60, within: 1.minute, only: :create
+
       def create
         xml = extract_xml
         if xml.blank?
@@ -10,6 +12,7 @@ module Api
           return
         end
         result = Ecfs::ReceiveSummaryService.call(xml: xml)
+        audit!("dgii_resumen", "InvoiceSummary", result.payload.to_json)
         render json: result.payload, status: :ok
       end
 
