@@ -7,7 +7,9 @@ module Ecfs
     end
 
     def initialize(xml:)
-      @xml = xml
+      # El XML llega como ASCII-8BIT desde el multipart; forzar UTF-8 para
+      # que SQLite no falle al persistir (Encoding::UndefinedConversionError).
+      @xml = xml.to_s.force_encoding("UTF-8")
     end
 
     def call

@@ -32,16 +32,16 @@ module Api
       def extract_xml
         file = params[:xml]
         return nil if file.blank?
-        return file if file.is_a?(String)
+        return file.force_encoding("UTF-8") if file.is_a?(String)
         if file.respond_to?(:read)
           content = file.read
           file.rewind if file.respond_to?(:rewind)
-          return content
+          return content.force_encoding("UTF-8")
         end
         if file.respond_to?(:tempfile)
-          return File.read(file.tempfile.path)
+          return File.read(file.tempfile.path).force_encoding("UTF-8")
         end
-        file.to_s
+        file.to_s.force_encoding("UTF-8")
       end
     end
   end
