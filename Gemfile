@@ -16,7 +16,7 @@ gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # XML parsing/validation
-gem "nokogiri", "~> 1.18"
+gem "nokogiri", "~> 1.19"
 
 # Keep JSON gem compatible with Rails 8.0 (avoid 3.x quirks_mode removal)
 gem "json", "~> 2.9"
