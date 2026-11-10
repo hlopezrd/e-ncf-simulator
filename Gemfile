@@ -60,7 +60,7 @@ group :development, :test do
   # N+1 query detection (notify only, no raising)
   gem "bullet"
 
-  gem "rspec-rails", "~> 7.1"
+  gem "rspec-rails", "~> 8.1"
   gem "factory_bot_rails"
   gem "shoulda-matchers", "~> 6.0"
   gem "faker"
