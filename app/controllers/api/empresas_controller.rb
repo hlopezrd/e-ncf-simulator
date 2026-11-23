@@ -45,13 +45,17 @@ module Api
       else
         render json: { errors: company.errors.full_messages }, status: :unprocessable_entity
       end
+    rescue ActiveRecord::RecordNotUnique
+      # Carrera entre dos altas del mismo RNC: la validacion de Rails no la
+      # alcanza, pero el indice parcial (activos) si. Antes esto era un 500.
+      render json: { errors: [ "Ya existe una empresa activa con ese RNC" ] }, status: :unprocessable_entity
     end
 
     def update
       return if performed?
       company = Company.find_by(id: params[:id])
       return render_not_found unless company
-      if company.update(company_params)
+      if company.update(company_update_params)
         audit!("update_company", "Company##{company.id}", { rnc: company.rnc }.to_json)
         render json: { data: serialize(company) }
       else
@@ -129,6 +133,11 @@ module Api
 
     def company_params
       params.permit(:rnc, :razon_social, :nombre_comercial, :email, :telefono, :activa)
+    end
+
+    # El RNC identifica a la empresa: no se puede cambiar desde la edición.
+    def company_update_params
+      params.permit(:razon_social, :nombre_comercial, :email, :telefono, :activa)
     end
 
     def serialize(company)

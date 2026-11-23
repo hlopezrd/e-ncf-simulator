@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_26_150004) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_23_170000) do
   create_table "allowed_origins", force: :cascade do |t|
     t.string "origin", null: false
     t.datetime "created_at", null: false
@@ -107,7 +107,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_26_150004) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_companies_on_deleted_at"
-    t.index ["rnc"], name: "index_companies_on_rnc", unique: true
+    t.index ["rnc"], name: "index_companies_on_rnc_active", unique: true, where: "deleted_at IS NULL"
   end
 
   create_table "electronic_invoices", force: :cascade do |t|
