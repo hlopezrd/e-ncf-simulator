@@ -2,6 +2,7 @@
 require "rubygems"
 require "bundler/setup"
 
-ARGV.unshift("--ensure-latest")
-
+# No usamos --ensure-latest: la frescura de dependencias ya la reporta Dependabot.
+# CI debe escanear el codigo con la version fijada en Gemfile.lock, no fallar
+# cuando sale una release nueva.
 load Gem.bin_path("brakeman", "brakeman")
