@@ -132,9 +132,15 @@ module Ecfs
         end
       end
 
+      # El comprador se identifica por RNC, salvo en el tipo 47 (pagos al
+      # exterior), cuyo XSD no tiene RNCComprador: usa
+      # Comprador/IdentificadorExtranjero. Sin esta excepcion, todo 47 salia
+      # "Aceptado Condicional" aunque estuviera completo.
       comprador = text_of(doc, %w[RNCComprador RncComprador rncComprador])
-      if comprador.blank?
-        @warnings << error("W001", "rncComprador", "Falta el RNC del comprador", "WARNING")
+      identificador_extranjero = text_of(doc, %w[IdentificadorExtranjero])
+      if comprador.blank? && identificador_extranjero.blank?
+        @warnings << error("W001", "rncComprador",
+                           "Falta el RNC (o el identificador extranjero) del comprador", "WARNING")
       end
 
       if self.class.xsd_validation_enabled?
